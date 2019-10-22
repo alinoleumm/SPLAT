@@ -114,7 +114,7 @@ public class LexerTester {
 				success++;
 				System.out.println("passed (lex error caught)");
 				if (verbose) {
-					System.out.println(ex.getMessage());
+					System.out.println(ex.toString());
 					System.out.println();
 				}
 
@@ -122,7 +122,7 @@ public class LexerTester {
 			} else {
 				failure++;
 				System.out.println("failed - lexing should have been successful");
-				System.out.println(ex.getMessage());
+				System.out.println(ex.toString());
 				System.out.println();
 			}
 

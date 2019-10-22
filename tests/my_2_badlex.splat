@@ -1,0 +1,3 @@
+If we meet an unexpected symbol
+like ! (exclamation mark)
+an exception should be thrown;

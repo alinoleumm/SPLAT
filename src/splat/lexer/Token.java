@@ -25,6 +25,7 @@ public class Token {
     }
 
     public String toString() {
-        return value + " is at line " + line + " and column " + column;
+        return "(" + line + "," + column + ") " + value;
+//        return value + " is at line " + line + " and column " + column;
     }
 }

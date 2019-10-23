@@ -2,6 +2,8 @@ package splat.lexer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class LexerTester {
@@ -43,6 +45,7 @@ public class LexerTester {
 		}
 
 		File[] testFiles = testDir.listFiles();
+		Arrays.sort(testFiles, Comparator.comparing(File::getName));
 
 		System.out.println("success");
 

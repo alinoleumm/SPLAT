@@ -27,16 +27,16 @@ public class Lexer {
 			BufferedReader br = new BufferedReader(fr);
 			int i;
 			String token = "";
-			int line = 0;
-			int column = 0;
-			int startColumn = 0;
+			int line = 1;
+			int column = 1;
+			int startColumn = 1;
 			boolean isLabel = false;
 			boolean isDoubleOp = false;
 			boolean isString = false;
 			while ((i = br.read()) != -1) {
 				if(isString) {
 					if(i<32) {
-						throw new LexException("Illegal characters in string",line,column);
+						throw new LexException("Illegal character in a string",line,column);
 					} else if((char)i=='"') {
 						token = token + (char)i;
 						column++;
@@ -59,12 +59,20 @@ public class Lexer {
 						column++;
 					} else if ((char) i == '\n') {
 						line++;
-						column = 0;
+						column = 1;
 					} else if ((char) i == '\t') {
-						column = column + 3;
+						column = column + 4;
 					}
 					startColumn = column;
 				} else if (validForLabel.indexOf((char) i) >= 0) {
+					if (isDoubleOp) {
+						if (!token.isEmpty()) {
+							tokens.add(new Token(token,line,startColumn));
+							token = "";
+						}
+						startColumn = column;
+						isDoubleOp = false;
+					}
 					isLabel = true;
 					token = token + (char) i;
 					column++;
@@ -138,7 +146,7 @@ public class Lexer {
 			}
 			if(!token.isEmpty()) {
 				if(isString) {
-					throw new LexException("Illegal characters in string",line,column);
+					throw new LexException("Illegal character in a string",line,column);
 				} else {
 					tokens.add(new Token(token, line, startColumn));
 				}

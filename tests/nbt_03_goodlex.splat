@@ -1,5 +1,0 @@
-program goodAndBad
-begin
-	if (3<4) then
-		print (not false);
-end;

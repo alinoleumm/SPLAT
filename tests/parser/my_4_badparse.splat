@@ -1,0 +1,10 @@
+program
+
+	record Phelps begin
+		Jumping: Integer["MISTAKE"];
+	end;
+		
+begin
+	Gold := (not Phelps.Jumping);
+	return;
+end;

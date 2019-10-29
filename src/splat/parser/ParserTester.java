@@ -95,7 +95,7 @@ public class ParserTester {
 		try {
 
 			testCount++;
-			System.out.print("Test Case " + testCount + ": " + testFile.getName() + "...");
+			System.out.print("Test Case " + testCount + ": " + testFile.getName() + "...\n");
 
 			ProgramAST prog = parser.parse();
 
@@ -127,7 +127,7 @@ public class ParserTester {
 				success++;
 				System.out.println("passed (parse error caught)");
 				if (verbose) {
-					System.out.println(ex.getMessage());
+					System.out.println(ex.toString());
 					System.out.println();
 				}
 
@@ -135,7 +135,7 @@ public class ParserTester {
 			} else {
 				failure++;
 				System.out.println("failed - parsing should have been successful");
-				System.out.println(ex.getMessage());
+				System.out.println(ex.toString());
 				System.out.println();
 			}
 

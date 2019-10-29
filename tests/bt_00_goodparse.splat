@@ -1,12 +1,15 @@
 program
 
-	donothing(w : Boolean, x : Integer) : Integer is
+	donothing(w : Boolean, x : Integer) :  Integer is
 		x : Integer;
 	begin
+	    return;
+	    print_line;
 		x := (x + 1);
+		y := 235;
 		return x;
 	end ;
-	
+
 begin
 	z[12][33].x.y[a] := donothing((99 + "uh oh!"));
 	print "Howdy!";

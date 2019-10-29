@@ -266,6 +266,7 @@ public class Parser {
  		} else if(peekTwoAhead("(")) {
 			Token tok = tokens.remove(0);
 			String label = parseLabel(tok);
+			checkNext("(");
 			List<Expression> args = parseArgs();
 			checkNext(")");
 			checkNext(";");
@@ -343,6 +344,7 @@ public class Parser {
 			return expr;
 		} else {
 			Token tok = tokens.remove(0);
+			System.out.println(tok.toString());
 			if(tok.toString().equals("true") || tok.toString().equals("false")) {
 				Expression expr = new SingleLiteral(tok, new BoolLiteral(tok, Boolean.parseBoolean(tok.toString())));
 				return expr;
@@ -362,7 +364,19 @@ public class Parser {
 	}
 
 	private List<Expression> parseArgs() throws ParseException {
-		return null;
+		List<Expression> args = new ArrayList<Expression>();
+		while(true) {
+			Expression expr = parseExpr();
+			System.out.println(expr);
+			args.add(expr);
+			if(peekNext(",")) {
+				tokens.remove(0);
+				continue;
+			} else {
+				break;
+			}
+		}
+		return args;
 	}
 
 	private String parseLabel(Token tok) throws ParseException {

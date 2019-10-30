@@ -2,14 +2,14 @@ package splat.parser.elements.declarations;
 
 import splat.lexer.Token;
 import splat.parser.elements.Declaration;
-import splat.parser.elements.Type;
+import splat.parser.elements.VarType;
 
 public class VariableDecl extends Declaration {
 
 	private String label;
-	private Type varType;
+	private VarType varType;
 
-	public VariableDecl(Token tok, String label, Type varType) {
+	public VariableDecl(Token tok, String label, VarType varType) {
 		super(tok);
 		this.label = label;
 		this.varType = varType;
@@ -19,7 +19,7 @@ public class VariableDecl extends Declaration {
 		return label;
 	}
 
-	public Type getVarType() {
+	public VarType getVarType() {
 		return varType;
 	}
 

@@ -1,6 +1,7 @@
 package splat.parser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import splat.lexer.Token;
@@ -20,11 +21,14 @@ import splat.parser.elements.other.FieldDeclaration;
 import splat.parser.elements.other.Parameter;
 import splat.parser.elements.statements.*;
 import splat.parser.elements.types.*;
+import splat.parser.elements.vartypes.*;
 
 public class Parser {
 
 	private List<Token> tokens;
-	
+	private List<String> reserved = Arrays.asList("program","begin","end","is","record","while","do","then","else","print","print_line","return","and","or","not","Integer","Boolean","String","true","false","null");
+	private List<String> binaryOps = Arrays.asList("and","or",">","<","=",">=","<=","+","-","*","/","%");
+
 	public Parser(List<Token> tokens) {
 		this.tokens = tokens;
 	}
@@ -72,10 +76,6 @@ public class Parser {
 		return tokens.get(1).getValue().equals(expected);
 	}
 	
-	
-	/*
-	 *  <program> ::= program <decls> begin <stmts> end ;
-	 */
 	public ProgramAST parse() throws ParseException {
 		
 		try {
@@ -101,7 +101,6 @@ public class Parser {
 		
 		while (!peekNext("begin")) {
 			Declaration decl = parseDecl();
-			System.out.println(decl.toString());
 			decls.add(decl);
 		}
 		
@@ -132,7 +131,6 @@ public class Parser {
 		Type retType = parseType(tokens.remove(0));
 		checkNext("is");
 		List<VariableDecl> varDecls = parseVarDecls();
-		checkNext(";");
 		checkNext("begin");
 		List<Statement> stmts = parseStmts();
 		checkNext("end");
@@ -143,15 +141,9 @@ public class Parser {
 
 	private List<VariableDecl> parseVarDecls() throws ParseException {
 		List<VariableDecl> varDecls = new ArrayList<VariableDecl>();
-		while(true) {
+		while(!peekNext("begin")) {
 			VariableDecl varDecl = parseVarDecl();
 			varDecls.add(varDecl);
-			if(peekNext(",")) {
-				tokens.remove(0);
-				continue;
-			} else {
-				break;
-			}
 		}
 		return varDecls;
 	}
@@ -160,11 +152,9 @@ public class Parser {
 		Token labelToken = tokens.remove(0);
 		String label = parseLabel(labelToken);
 		checkNext(":");
-		Type type = parseType(tokens.remove(0));
+		VarType type = parseVarType(tokens.remove(0));
 		VariableDecl varDecl = new VariableDecl(labelToken,label,type);
-		if(!peekNext(",") && !peekNext(";")) {
-			throw new ParseException("Illegal character in parameters", labelToken);
-		}
+		checkNext(";");
 		return varDecl;
 	}
 
@@ -201,9 +191,8 @@ public class Parser {
 	
 	private List<Statement> parseStmts() throws ParseException {
 		List<Statement> stmts = new ArrayList<Statement>();
-		while (!peekNext("end")) {
+		while (!peekNext("end") && !peekNext("else")) {
 			Statement stmt = parseStmt();
-			System.out.println(stmt.toString());
 			stmts.add(stmt);
 		}
 		return stmts;
@@ -238,6 +227,7 @@ public class Parser {
 			checkNext("then");
 			List<Statement> stmtsTrue = parseStmts();
 			if(peekNext("else")) {
+				tokens.remove(0);
 				List<Statement> stmtsFalse = parseStmts();
 				checkNext("end");
 				checkNext("if");
@@ -274,60 +264,97 @@ public class Parser {
 			return stmt;
 		} else if(peekTwoAhead(":=") || peekTwoAhead(".") || peekTwoAhead("[")) {
 			Token tok = tokens.remove(0);
-			LabelAccess labelAccess = parseLabelAccess(tok);
-			checkNext(":=");
-			Expression expr = parseExpr();
-			checkNext(";");
-			Statement stmt = new Assignment(tok,labelAccess,expr);
-			return stmt;
+			String label = parseLabel(tok);
+			LabelAccess varOrParam = new VariableOrParameter(tok,label);
+			if(!peekNext(":=")) {
+				LabelAccess labelAccess = parseLabelAccess(tok, varOrParam);
+				checkNext(":=");
+				Expression expr = parseExpr();
+				checkNext(";");
+				Statement stmt = new Assignment(tok, labelAccess, expr);
+				return stmt;
+			} else {
+				checkNext(":=");
+				Expression expr = parseExpr();
+				checkNext(";");
+				Statement stmt = new Assignment(tok, varOrParam, expr);
+				return stmt;
+			}
 		} else {
 			Token tok = tokens.remove(0);
 			throw new ParseException("Illegal statement", tok);
 		}
 	}
 
-	private LabelAccess parseLabelAccess(Token tok) throws ParseException {
+	private LabelAccess parseLabelAccess(Token tok, LabelAccess l) throws ParseException {
 		if(peekNext(".")) {
-			LabelAccess labelAccessIn = parseLabelAccess(tok);
 			checkNext(".");
 			Token nextTok = tokens.remove(0);
-			String label = parseLabel(nextTok);
-			LabelAccess labelAccess = new RecordFieldAccess(tok, labelAccessIn, label);
-			return labelAccess;
+			String field = parseLabel(nextTok);
+			LabelAccess recField = new RecordFieldAccess(tok,l,field);
+			if(peekNext(".") || peekNext("[")) {
+				return parseLabelAccess(tok,recField);
+			} else {
+				return recField;
+			}
 		}  else if(peekNext("[")){
-			LabelAccess labelAccessIn = parseLabelAccess(tok);
 			checkNext("[");
 			Expression expr = parseExpr();
 			checkNext("]");
-			LabelAccess labelAccess = new ArrayAccess(tok, labelAccessIn, expr);
-			return labelAccess;
+			LabelAccess arrayInd = new ArrayAccess(tok,l,expr);
+			if(peekNext(".") || peekNext("[")) {
+				return parseLabelAccess(tok,arrayInd);
+			} else {
+				return arrayInd;
+			}
 		} else {
-			String label = parseLabel(tok);
-			LabelAccess labelAccess = new VariableOrParameter(tok, label);
-			return labelAccess;
+			return l;
 		}
 	}
 
+
+	private boolean isBinaryOp(String op) {
+		if(binaryOps.contains(op)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	//				if (peekTwoAhead("and") || peekTwoAhead("or") || peekTwoAhead(">") || peekTwoAhead("<")
+//						|| peekTwoAhead("=") || peekTwoAhead(">=") || peekTwoAhead("<=") || peekTwoAhead("+")
+//						|| peekTwoAhead("-") || peekTwoAhead("*") || peekTwoAhead("/") || peekTwoAhead("%")) {
+//					Expression exprLeft = parseExpr();
+//					String binaryOp = tokens.remove(0).toString();
+//					Expression exprRight = parseExpr();
+//					checkNext(")");
+//					Expression expr = new BinaryOperation(tok, exprLeft, binaryOp, exprRight);
+//					return expr;
+//				} else {
+//
+//				}
+
 	private Expression parseExpr() throws ParseException {
 		if (peekNext("(")) {
-			Token tok = tokens.remove(0);
-			if (peekTwoAhead("and") || peekTwoAhead("or") || peekTwoAhead(">") || peekTwoAhead("<")
-					|| peekTwoAhead("=") || peekTwoAhead(">=") || peekTwoAhead("<=") || peekTwoAhead("+")
-					|| peekTwoAhead("-") || peekTwoAhead("*") || peekTwoAhead("/") || peekTwoAhead("%")) {
-				Expression exprLeft = parseExpr();
-				String binaryOp = tokens.remove(0).toString();
-				Expression exprRight = parseExpr();
-				checkNext(")");
-				Expression expr = new BinaryOperation(tok, exprLeft, binaryOp, exprRight);
-				return expr;
-			} else if (peekTwoAhead("not") || peekTwoAhead("-")) {
+			if (peekTwoAhead("not") || peekTwoAhead("-")) {
+				Token tok = tokens.remove(0);
 				String unaryOp = tokens.remove(0).toString();
 				Expression exprIn = parseExpr();
 				checkNext(")");
 				Expression expr = new UnaryOperation(tok, unaryOp, exprIn);
 				return expr;
 			} else {
-				throw new ParseException("Illegal expression", tok);
+				Token tok = tokens.remove(0);
+				Expression exprLeft = parseExpr();
+				String binaryOp = tokens.remove(0).toString();
+				if(isBinaryOp(binaryOp)) {
+					Expression exprRight = parseExpr();
+					checkNext(")");
+					Expression expr = new BinaryOperation(tok, exprLeft, binaryOp, exprRight);
+					return expr;
+				} else {
+					throw new ParseException("Illegal expression 1", tok);
+				}
 			}
 		}  else if (peekTwoAhead("(")) {
 			Token tok = tokens.remove(0);
@@ -337,43 +364,49 @@ public class Parser {
 			checkNext(")");
 			Expression expr = new NonVoidFunctionCall(tok, label, args);
 			return expr;
-		} else if (peekTwoAhead(".") || peekTwoAhead("[") || isLabel(tokens.get(0))) {
+		} else if (peekTwoAhead(".") || peekTwoAhead("[")) { // || isLabel(tokens.get(0))
 			Token tok = tokens.remove(0);
-			LabelAccess labelAccess = parseLabelAccess(tok);
+			String label = parseLabel(tok);
+			LabelAccess varOrParam = new VariableOrParameter(tok,label);
+			LabelAccess labelAccess = parseLabelAccess(tok,varOrParam);
 			Expression expr = new SingleLabelAccess(tok, labelAccess);
 			return expr;
 		} else {
 			Token tok = tokens.remove(0);
-			System.out.println(tok.toString());
-			if(tok.toString().equals("true") || tok.toString().equals("false")) {
+			if(String.valueOf(tok).equals("true") || String.valueOf(tok).equals("false")) {
 				Expression expr = new SingleLiteral(tok, new BoolLiteral(tok, Boolean.parseBoolean(tok.toString())));
 				return expr;
-			} else if(tok.toString().equals("null")) {
+			} else if(String.valueOf(tok).equals("null")) {
 				Expression expr = new SingleLiteral(tok, new RectypeLiteral(tok));
 				return expr;
-			} else if(tok.toString().matches("\".*\"")) {
+			} else if(String.valueOf(tok).matches("\".*\"")) {
 				Expression expr = new SingleLiteral(tok, new StringLiteral(tok, tok.toString()));
 				return expr;
-			} else if(tok.toString().matches("[1-9][0-9]*|0")) {
+			} else if(String.valueOf(tok).matches("[1-9][0-9]*|0")) {
 				Expression expr = new SingleLiteral(tok, new IntLiteral(tok, Integer.parseInt(tok.toString())));
 				return expr;
+			} else if(isLabel(tok)) {
+				LabelAccess varOrParam = new VariableOrParameter(tok, tok.toString());
+				Expression expr = new SingleLabelAccess(tok, varOrParam);
+				return expr;
 			} else {
-				throw new ParseException("Illegal expression", tok);
+				throw new ParseException("Illegal expression 2", tok);
 			}
 		}
 	}
 
 	private List<Expression> parseArgs() throws ParseException {
 		List<Expression> args = new ArrayList<Expression>();
-		while(true) {
-			Expression expr = parseExpr();
-			System.out.println(expr);
-			args.add(expr);
-			if(peekNext(",")) {
-				tokens.remove(0);
-				continue;
-			} else {
-				break;
+		if(!peekNext(")")) {
+			while (true) {
+				Expression expr = parseExpr();
+				args.add(expr);
+				if (peekNext(",")) {
+					tokens.remove(0);
+					continue;
+				} else {
+					break;
+				}
 			}
 		}
 		return args;
@@ -381,9 +414,21 @@ public class Parser {
 
 	private String parseLabel(Token tok) throws ParseException {
 		if(tok.toString().matches("[A-Za-z_][A-Za-z0-9_]*")) {
-			return tok.toString();
+			if(!isReserved(tok.toString())) {
+				return tok.toString();
+			} else {
+				throw new ParseException("Reserved keyword", tok);
+			}
 		} else {
 			throw new ParseException("Illegal label", tok);
+		}
+	}
+
+	private boolean isReserved(String label) {
+		if(reserved.contains(label)) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -397,14 +442,16 @@ public class Parser {
 
 	private List<Parameter> parseParams() throws ParseException {
 		List<Parameter> params = new ArrayList<Parameter>();
-		while(true) {
-			Parameter param = parseParam();
-			params.add(param);
-			if(peekNext(",")) {
-				tokens.remove(0);
-				continue;
-			} else {
-				break;
+		if(!peekNext(")")) {
+			while (true) {
+				Parameter param = parseParam();
+				params.add(param);
+				if (peekNext(",")) {
+					tokens.remove(0);
+					continue;
+				} else {
+					break;
+				}
 			}
 		}
  		return params;
@@ -439,7 +486,8 @@ public class Parser {
 			} else if(isLabel(tok)) {
 				tokens.remove(0);
 				tokens.remove(0);
-				return new ArrayType(tok, new RecType(tok, tok.toString()));
+				String token = parseLabel(tok);
+				return new ArrayType(tok, new RecType(tok, token));
 			} else {
 				throw new ParseException("Illegal type", tok);
 			}
@@ -451,9 +499,72 @@ public class Parser {
 			} else if(tok.toString().equals("String")) {
 				return new StringType(tok);
 			} else if(isLabel(tok)) {
-				return new RecType(tok, tok.toString());
+				String token = parseLabel(tok);
+				return new RecType(tok, token);
 			} else if(tok.toString().equals("void")) {
 				return new VoidType(tok);
+			} else {
+				throw new ParseException("Illegal type", tok);
+			}
+		}
+	}
+
+	private VarType parseVarType(Token tok) throws ParseException {
+		if(peekNext("[")) {
+			if(tok.toString().equals("Integer")) {
+				tokens.remove(0);
+				String intToken = tokens.remove(0).toString();
+				if(intToken.matches("[1-9][0-9]*|0")) {
+					IntLiteral intLit = new IntLiteral(tok, Integer.parseInt(intToken));
+					checkNext("]");
+					return new ArrayVarType(tok, new IntegerVarType(tok), intLit);
+				} else {
+					throw new ParseException("Illegal int literal", tok);
+				}
+			} else if(tok.toString().equals("Boolean")) {
+				tokens.remove(0);
+				String intToken = tokens.remove(0).toString();
+				if(intToken.matches("[1-9][0-9]*|0")) {
+					IntLiteral intLit = new IntLiteral(tok, Integer.parseInt(intToken));
+					checkNext("]");
+					return new ArrayVarType(tok, new BooleanVarType(tok), intLit);
+				} else {
+					throw new ParseException("Illegal int literal", tok);
+				}
+			} else if(tok.toString().equals("String")) {
+				tokens.remove(0);
+				String intToken = tokens.remove(0).toString();
+				if(intToken.matches("[1-9][0-9]*|0")) {
+					IntLiteral intLit = new IntLiteral(tok, Integer.parseInt(intToken));
+					checkNext("]");
+					return new ArrayVarType(tok, new StringVarType(tok), intLit);
+				} else {
+					throw new ParseException("Illegal int literal", tok);
+				}
+			} else if(isLabel(tok)) {
+				tokens.remove(0);
+				String token = parseLabel(tok);
+				String intToken = tokens.remove(0).toString();
+				if(intToken.matches("[1-9][0-9]*|0")) {
+					IntLiteral intLit = new IntLiteral(tok, Integer.parseInt(intToken));
+					checkNext("]");
+					return new ArrayVarType(tok, new RecVarType(tok, token), intLit);
+				} else {
+					throw new ParseException("Illegal int literal", tok);
+				}
+			} else {
+				throw new ParseException("Illegal type", tok);
+			}
+		} else {
+			if (tok.toString().equals("Integer")) {
+				return new IntegerVarType(tok);
+			} else if(tok.toString().equals("Boolean")) {
+				return new BooleanVarType(tok);
+			} else if(tok.toString().equals("String")) {
+				return new StringVarType(tok);
+			} else if(isLabel(tok)) {
+				String token = parseLabel(tok);
+				return new RecVarType(tok, token);
 			} else {
 				throw new ParseException("Illegal type", tok);
 			}

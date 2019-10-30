@@ -5,6 +5,7 @@ program
 	begin
 	    return;
 	    print_line;
+	    z[12][33].x.y[a] := 3;
 		x := (x + 1);
 		y := 235;
 		donothing(3, "hell");

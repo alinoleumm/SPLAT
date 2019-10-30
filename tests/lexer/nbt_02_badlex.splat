@@ -1,9 +1,0 @@
-program bad 
-begin
-record rec#" begin
-	a:Integer
-	b:String
-	end;
-
-print_line;
-end;

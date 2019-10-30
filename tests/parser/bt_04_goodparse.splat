@@ -1,7 +1,0 @@
-program
-
-begin
-	if ((-a) <= (c/4)) then
-		a[20].link := "good";
-	end if;
-end;

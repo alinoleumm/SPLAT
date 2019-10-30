@@ -1,6 +1,0 @@
-program
-	record a begin
-		sss:null;
-	end;
-begin
-end;

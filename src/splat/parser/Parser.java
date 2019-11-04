@@ -470,22 +470,22 @@ public class Parser {
 	}
 
 	private Type parseType(Token tok) throws ParseException {
-		if(peekNext("[") && peekTwoAhead("]")) {
+		if(peekNext("[")) {
 			if(tok.toString().equals("Integer")) {
-				tokens.remove(0);
-				tokens.remove(0);
+				checkNext("[");
+				checkNext("]");
 				return new ArrayType(tok, new IntegerType(tok));
 			} else if(tok.toString().equals("Boolean")) {
-				tokens.remove(0);
-				tokens.remove(0);
+				checkNext("[");
+				checkNext("]");
 				return new ArrayType(tok, new BooleanType(tok));
 			} else if(tok.toString().equals("String")) {
-				tokens.remove(0);
-				tokens.remove(0);
+				checkNext("[");
+				checkNext("]");
 				return new ArrayType(tok, new StringType(tok));
 			} else if(isLabel(tok)) {
-				tokens.remove(0);
-				tokens.remove(0);
+				checkNext("[");
+				checkNext("]");
 				String token = parseLabel(tok);
 				return new ArrayType(tok, new RecType(tok, token));
 			} else {

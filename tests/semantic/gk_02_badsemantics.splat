@@ -1,0 +1,16 @@
+program
+	donothing(x : Integer) : Integer is
+	begin
+		x := (x + 1);
+		return x;
+	end ;
+	
+	donothing(x : Integer) : Integer is
+	begin
+		x := (x + 1);
+		return x ;
+	end ;
+
+begin
+	print "Howdy!";
+end;

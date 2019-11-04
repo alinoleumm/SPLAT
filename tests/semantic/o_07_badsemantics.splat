@@ -1,0 +1,26 @@
+program
+	donothing(x : Integer) : Integer is
+	begin
+		x := (x + 1);
+		return 2;
+	end;
+	
+	a : Integer[10];
+
+	record sub_record begin
+        b : Integer[];
+        c : String;
+    end;
+
+	record my_record begin
+	    b : Integer;
+	    c : String;
+        d : sub_record;
+	end;
+
+    x : my_record;
+begin
+    x.b := 10;
+    x.d.b[1] := "kl";
+	print "Howdy!";
+end;

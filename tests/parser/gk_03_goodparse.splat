@@ -1,0 +1,16 @@
+program 
+flag:Boolean;
+record point 
+begin
+	x: Integer;
+	y: Integer;
+end;
+begin
+  flag := (true+false);
+  if (flag = true)
+  then
+  print "Hello, world.";
+  else 
+  print_line;
+  end if;
+end;

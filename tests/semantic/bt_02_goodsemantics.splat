@@ -1,0 +1,28 @@
+program
+	
+	record Phone begin
+		serial:Integer;
+		brand:String;
+		users:User[];
+	end;
+	
+	record User begin
+		name:String;
+	end;
+	
+	headphones(p: Phone) : void is
+	begin
+		print "Headphones of ";
+		print p.users[2];
+	end;
+	
+	number:Integer;
+	bool:Boolean;
+	
+	iPhoneUsers:User[4];
+	p : Phone;
+	
+begin
+	
+	headphones(p);
+end;

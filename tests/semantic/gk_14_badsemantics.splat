@@ -1,0 +1,28 @@
+program
+	
+	record point 
+	begin
+		x: Integer;
+		y: Integer;
+	end;
+	k: Integer;
+q:point;
+	donothing2(x : Integer) : Integer is
+	begin
+		x := (x + 1);
+		return x;
+	end ;
+
+	donothing(x : Integer) : Integer is
+	y: Integer;
+	point : point;
+	begin
+	 	x := (x + 1);
+		return x;
+	end ;
+
+
+begin
+	print "Howdy!";
+	k := donothing(q.x);
+end;

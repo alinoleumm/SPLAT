@@ -1,0 +1,18 @@
+program
+
+	record Color
+	begin
+		c : Integer;
+		foo : String;
+	end;
+
+	record Grid3D
+	begin
+		pos : Color[][][];
+	end;
+	
+	x : Grid3D;
+begin
+	print "Howdy!";
+	x.pos[1][2][3].c := 10;
+end;

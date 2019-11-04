@@ -1,0 +1,39 @@
+program
+	
+	record point 
+	begin
+		x: Integer;
+		y: Integer;
+	end;
+	record threedpoint 
+	begin
+		x: Integer;
+		z: Integer;
+	end;
+	k: Integer;
+	x: Integer;
+	donothing(x : Integer) : Integer is
+	y: Integer;
+	begin
+	 	x := (x + 1);
+		if (x > 3) then
+		x := 3;
+		return false;
+		else 
+		x :=5; 
+		return "x";
+		end if;
+	end ;
+
+
+begin
+	print "Howdy!";
+	x:=2;
+	k := donothing(x);
+	if (x+3) then
+	while(x+11)do
+	x := (x+1);
+	end while;
+	end if;
+
+end;

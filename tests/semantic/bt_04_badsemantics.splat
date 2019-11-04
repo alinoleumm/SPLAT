@@ -1,0 +1,46 @@
+program
+	
+	record Phone begin
+		serial:Integer;
+		brand:String;
+		users:User[];
+	end;
+	
+	record User begin
+		name:String;
+	end;
+	
+	headphones(p: Phone) : void is
+	begin
+		print "Headphones of ";
+		print p.users[2];
+	end;
+	
+	charge(p: Phone):Boolean is
+	begin
+		if ("Charger" = "Charger") then
+			print "Charged";
+		end if;
+	end;
+	
+	number:Integer;
+	
+	iPhoneUsers:User[4];
+	p : Phone;
+	p2: Phone;
+	
+begin
+	
+	
+	
+	if (p.serial = number) then
+		headphones(p);
+	else
+		if (p2.serial = number) then
+			headphones(number);
+		else
+			print "Serial number is incorrect";
+		end if;
+	end if;
+	
+end;

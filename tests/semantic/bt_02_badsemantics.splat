@@ -1,0 +1,28 @@
+program
+	
+	record Phone begin
+		serial:Integer;
+		brand:String;
+		users:User[];
+	end;
+	
+	record User begin
+		name:String;
+	end;
+	
+	headphones(p: Phone) : Integer is
+	begin
+		print "Headphones of ";
+		return p.users[2].name;
+	end;
+	
+	number:Integer;
+	bool:Boolean;
+	
+	iPhoneUsers:User[4];
+	
+begin
+	
+	p := Phone(123, "iPhone", iPhoneUsers);
+	headphones(p);
+end;

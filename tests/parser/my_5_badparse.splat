@@ -1,0 +1,20 @@
+program
+
+	record ThisIsIt begin
+		BillieJean: Integer;
+		BeatIt: Boolean;
+	end;
+
+	Gaga: Integer;
+
+	Queen (FM: String): void is
+		BohR: Integer;
+	begin
+		return;
+	end;
+		
+begin
+	if (and oko) then
+		print Gaga;
+	end if;
+end;

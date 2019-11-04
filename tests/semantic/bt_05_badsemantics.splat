@@ -1,0 +1,42 @@
+program
+	
+	record Phone begin
+		serial:Integer;
+		brand:String;
+		users:User[];
+	end;
+	
+	record User begin
+		name:String;
+	end;
+	
+	headphones(p: Phone) : void is
+	begin
+		print "Headphones of ";
+		print p.users[2];
+	end;
+	
+	charge(p: Phone):Boolean is
+	begin
+		if ("Charger" = "Charger") then
+			print "Charged";
+		end if;
+	end;
+	
+	number:Integer;
+	
+	iPhoneUsers:User[4];
+	p : Phone;
+	p2: Phone;
+	i:Integer;
+	
+begin
+	
+	
+	i:=0;
+	while ((i < number) and (i<4)) do
+		print p.users[i];
+	end while;
+	
+	return number;
+end;

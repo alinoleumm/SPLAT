@@ -1,0 +1,6 @@
+program Unicorn begin
+	num2 :Integer;
+	return num2*3;
+
+
+end;

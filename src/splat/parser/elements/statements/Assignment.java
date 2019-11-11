@@ -4,6 +4,11 @@ import splat.lexer.Token;
 import splat.parser.elements.Expression;
 import splat.parser.elements.LabelAccess;
 import splat.parser.elements.Statement;
+import splat.parser.elements.Type;
+import splat.parser.elements.declarations.FunctionDecl;
+import splat.parser.elements.declarations.RectypeDecl;
+
+import java.util.Map;
 
 public class Assignment extends Statement {
 
@@ -24,8 +29,11 @@ public class Assignment extends Statement {
         return expr;
     }
 
+    public void analyze(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) {
+
+    }
+
     public String toString() {
         return labelAccess.toString() + " := " + expr.toString();
     }
-
 }

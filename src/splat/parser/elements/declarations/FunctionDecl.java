@@ -10,23 +10,17 @@ import java.util.List;
 
 public class FunctionDecl extends Declaration {
 
-	private String label;
 	private List<Parameter> params;
 	private Type retType;
 	private List<VariableDecl> varDecls;
 	private List<Statement> stmts;
 
 	public FunctionDecl(Token tok, String label, List<Parameter> params, Type retType, List<VariableDecl> varDecls, List<Statement> stmts) {
-		super(tok);
-		this.label = label;
+		super(tok, label);
 		this.params = params;
 		this.retType = retType;
 		this.varDecls = varDecls;
 		this.stmts = stmts;
-	}
-
-	public String getLabel() {
-		return label;
 	}
 
 	public List<Parameter> getParams() {
@@ -47,7 +41,7 @@ public class FunctionDecl extends Declaration {
 
 	public String toString() {
 		String str;
-		str = label + " (";
+		str = this.getLabel() + " (";
 		for(int k = 0; k < params.size(); k++) {
 			str = str + params.get(k).toString();
 			if (k != params.size() - 1) {
@@ -68,4 +62,5 @@ public class FunctionDecl extends Declaration {
 		str = str + "end ;";
 		return str;
 	}
+
 }

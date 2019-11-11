@@ -8,17 +8,11 @@ import java.util.List;
 
 public class RectypeDecl extends Declaration {
 
-	private String label;
 	private List<FieldDeclaration> fieldDecls;
 	
 	public RectypeDecl(Token tok, String label, List<FieldDeclaration> fieldDecls) {
-		super(tok);
-		this.label = label;
+		super(tok, label);
 		this.fieldDecls = fieldDecls;
-	}
-
-	public String getLabel() {
-		return label;
 	}
 
 	public List<FieldDeclaration> getFieldDecls() {
@@ -26,7 +20,7 @@ public class RectypeDecl extends Declaration {
 	}
 
 	public String toString() {
-		String str = "record " + label + " begin\n";
+		String str = "record " + this.getLabel() + " begin\n";
 		for(int i=0; i<fieldDecls.size(); i++) {
 			str = str + "\t" + fieldDecls.get(i).toString() + ";\n";
 		}

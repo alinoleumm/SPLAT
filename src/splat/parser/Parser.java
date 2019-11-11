@@ -184,7 +184,7 @@ public class Parser {
 		String label = parseLabel(labelToken);
 		checkNext(":");
 		Type type = parseType(tokens.remove(0));
-		FieldDeclaration fieldDecl = new FieldDeclaration(label,type);
+		FieldDeclaration fieldDecl = new FieldDeclaration(labelToken,label,type);
 		checkNext(";");
 		return fieldDecl;
 	}
@@ -321,19 +321,6 @@ public class Parser {
 		}
 	}
 
-	//				if (peekTwoAhead("and") || peekTwoAhead("or") || peekTwoAhead(">") || peekTwoAhead("<")
-//						|| peekTwoAhead("=") || peekTwoAhead(">=") || peekTwoAhead("<=") || peekTwoAhead("+")
-//						|| peekTwoAhead("-") || peekTwoAhead("*") || peekTwoAhead("/") || peekTwoAhead("%")) {
-//					Expression exprLeft = parseExpr();
-//					String binaryOp = tokens.remove(0).toString();
-//					Expression exprRight = parseExpr();
-//					checkNext(")");
-//					Expression expr = new BinaryOperation(tok, exprLeft, binaryOp, exprRight);
-//					return expr;
-//				} else {
-//
-//				}
-
 	private Expression parseExpr() throws ParseException {
 		if (peekNext("(")) {
 			if (peekTwoAhead("not") || peekTwoAhead("-")) {
@@ -462,7 +449,7 @@ public class Parser {
 		String label = parseLabel(labelToken);
 		checkNext(":");
 		Type type = parseType(tokens.remove(0));
-		Parameter param = new Parameter(label,type);
+		Parameter param = new Parameter(labelToken,label,type);
 		if(!peekNext(",") && !peekNext(")")) {
 			throw new ParseException("Illegal character in parameters", labelToken);
 		}

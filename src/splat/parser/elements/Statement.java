@@ -1,6 +1,10 @@
 package splat.parser.elements;
 
 import splat.lexer.Token;
+import splat.parser.elements.declarations.FunctionDecl;
+import splat.parser.elements.declarations.RectypeDecl;
+
+import java.util.Map;
 
 public abstract class Statement extends ASTElement {
 
@@ -16,9 +20,9 @@ public abstract class Statement extends ASTElement {
 	 * needed for performing semantic analysis and type retrieval for the 
 	 * sub-expressions.
 	 */
-//	 public abstract void analyze(Map<String, FunctionDecl> funcMap,
-//	                              Map<String, RectypeDecl> rectypeMap,
-//	                              Map<String, Type> varAndParamMap);
+	 public abstract void analyze(Map<String, FunctionDecl> funcMap,
+								  Map<String, RectypeDecl> rectypeMap,
+								  Map<String, Type> varAndParamMap);
 	
 	/**
 	 * This will be needed for Phase 4 - this abstract method will need to be

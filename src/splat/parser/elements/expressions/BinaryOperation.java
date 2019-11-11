@@ -2,6 +2,11 @@ package splat.parser.elements.expressions;
 
 import splat.lexer.Token;
 import splat.parser.elements.Expression;
+import splat.parser.elements.Type;
+import splat.parser.elements.declarations.FunctionDecl;
+import splat.parser.elements.declarations.RectypeDecl;
+
+import java.util.Map;
 
 public class BinaryOperation extends Expression {
 
@@ -26,6 +31,10 @@ public class BinaryOperation extends Expression {
 
     public Expression getExprRight() {
         return exprRight;
+    }
+
+    public Type analyzeAndGetType(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) {
+        return null;
     }
 
     public String toString() {

@@ -6,17 +6,11 @@ import splat.parser.elements.VarType;
 
 public class VariableDecl extends Declaration {
 
-	private String label;
 	private VarType varType;
 
 	public VariableDecl(Token tok, String label, VarType varType) {
-		super(tok);
-		this.label = label;
+		super(tok, label);
 		this.varType = varType;
-	}
-
-	public String getLabel() {
-		return label;
 	}
 
 	public VarType getVarType() {
@@ -24,7 +18,7 @@ public class VariableDecl extends Declaration {
 	}
 
 	public String toString() {
-		return label + " : " + varType.toString() + ";";
+		return this.getLabel() + " : " + varType.toString() + ";";
 	}
 
 }

@@ -5,9 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.sun.xml.internal.ws.server.ServerRtException;
 import splat.parser.elements.*;
-import splat.parser.elements.accesses.ArrayAccess;
 import splat.parser.elements.declarations.FunctionDecl;
 import splat.parser.elements.declarations.RectypeDecl;
 import splat.parser.elements.declarations.VariableDecl;
@@ -18,7 +16,6 @@ import splat.parser.elements.statements.Return;
 import splat.parser.elements.statements.ReturnExpression;
 import splat.parser.elements.types.*;
 import splat.parser.elements.vartypes.*;
-import sun.reflect.generics.tree.ReturnType;
 
 public class SemanticAnalyzer {
 
@@ -95,9 +92,6 @@ public class SemanticAnalyzer {
 
 
 	private void checkTypeExistance(Type type) throws SemanticAnalysisException {
-
-		// TODO:  You may need to modify the class names for representing types
-		// here to get this to properly compile
 
 		if ((type instanceof ArrayType) || (type instanceof ArrayVarType)) {
 			// Need to recursively check the base type
@@ -216,7 +210,6 @@ public class SemanticAnalyzer {
 		// information for a specific function -- this is needed to do
 		// semantic analysis for its body
 
-		// FIXME: The code here will look somewhat similar to setMaps()
 		Map<String, Type> varAndParamMap = new HashMap<String, Type>();
 		for (Parameter param : funcDecl.getParams()) {
 			String paramLabel = param.getLabel();
@@ -238,7 +231,6 @@ public class SemanticAnalyzer {
 	private void checkNoDuplicateFieldLabels(RectypeDecl rectypeDecl)
 			throws SemanticAnalysisException {
 
-		// FIXME: Similar to checkNoDuplicateProgLabels()
         Set<String> labels = new HashSet<String>();
         for (FieldDeclaration field : rectypeDecl.getFieldDecls()) {
             String label = field.getLabel();
@@ -254,7 +246,6 @@ public class SemanticAnalyzer {
 	private void checkNoDuplicateFuncLabels(FunctionDecl funcDecl)
 									throws SemanticAnalysisException {
 
-		// FIXME: Similar to checkNoDuplicateProgLabels()
         Set<String> labels = new HashSet<String>();
         for (Parameter param : funcDecl.getParams()) {
             String label = param.getLabel();

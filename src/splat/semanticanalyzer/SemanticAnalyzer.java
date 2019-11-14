@@ -5,14 +5,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.sun.xml.internal.ws.server.ServerRtException;
 import splat.parser.elements.*;
+import splat.parser.elements.accesses.ArrayAccess;
 import splat.parser.elements.declarations.FunctionDecl;
 import splat.parser.elements.declarations.RectypeDecl;
 import splat.parser.elements.declarations.VariableDecl;
 import splat.parser.elements.other.FieldDeclaration;
 import splat.parser.elements.other.Parameter;
+import splat.parser.elements.statements.IfThenElse;
+import splat.parser.elements.statements.Return;
+import splat.parser.elements.statements.ReturnExpression;
 import splat.parser.elements.types.*;
 import splat.parser.elements.vartypes.*;
+import sun.reflect.generics.tree.ReturnType;
 
 public class SemanticAnalyzer {
 
@@ -24,6 +30,9 @@ public class SemanticAnalyzer {
 
 	public SemanticAnalyzer(ProgramAST progAST) {
 		this.progAST = progAST;
+		this.funcMap = new HashMap<String, FunctionDecl>();
+		this.rectypeMap = new HashMap<String, RectypeDecl>();
+		this.progVarMap = new HashMap<String, Type>();
 	}
 
 	public void analyze() throws SemanticAnalysisException {
@@ -58,11 +67,31 @@ public class SemanticAnalyzer {
 
 		// Perform semantic analysis on the program body
 		for (Statement stmt : progAST.getStmts()) {
+			if(stmt instanceof Return || stmt instanceof ReturnExpression) {
+				throw new SemanticAnalysisException("cant have return statement in body!", progAST);
+			}
 			stmt.analyze(funcMap, rectypeMap, progVarMap);
 		}
 
 	}
 
+
+	private Type varToType(ArrayVarType varType) {
+		VarType t = varType.getVarType();
+		Type tt;
+		if(t instanceof IntegerVarType) {
+			tt = new IntegerType(t.getToken());
+		} else if(t instanceof BooleanVarType) {
+			tt = new BooleanType(t.getToken());
+		} else if(t instanceof StringVarType) {
+			tt = new StringType(t.getToken());
+		} else if(t instanceof ArrayVarType) {
+			tt = new ArrayType(t.getToken(),varToType((ArrayVarType) t));
+		} else {
+			tt = new RecType(t.getToken(),((RecVarType) t).getLabel());
+		}
+		return tt;
+	}
 
 
 	private void checkTypeExistance(Type type) throws SemanticAnalysisException {
@@ -72,7 +101,13 @@ public class SemanticAnalyzer {
 
 		if ((type instanceof ArrayType) || (type instanceof ArrayVarType)) {
 			// Need to recursively check the base type
-			ArrayType arrType = (ArrayType)type;
+			ArrayType arrType;
+			if(type instanceof ArrayVarType) {
+				Type theType = varToType((ArrayVarType) type);
+				arrType = new ArrayType(type.getToken(),theType);
+			} else {
+				arrType = (ArrayType) type;
+			}
 			checkTypeExistance(arrType.getType());
 		} else if ((type instanceof BooleanType) || (type instanceof BooleanVarType) ||
 				(type instanceof IntegerType) || (type instanceof IntegerVarType) ||
@@ -80,8 +115,13 @@ public class SemanticAnalyzer {
 				(type instanceof VoidType)) {
 			// This is okay... no need to throw an exception here
 		} else if ((type instanceof RecType) || (type instanceof RecVarType)){
-			RecType recType = (RecType)type;
-			if (!rectypeMap.containsKey(recType.getLabel())) {
+			RecType recType;
+			if (type instanceof RecVarType) {
+				recType = new RecType(type.getToken(),((RecVarType) type).getLabel());
+			} else {
+				recType = (RecType) type;
+			}
+			if (!rectypeMap.containsKey(recType.getLabel())) { // there was a negation before
 				throw new SemanticAnalysisException("Duplicate record field labels", recType);
 			}
 		}
@@ -116,10 +156,57 @@ public class SemanticAnalyzer {
 			checkTypeExistance(type);
 		}
 
-		// Perform semantic analysis on the function body
-		for (Statement stmt : funcDecl.getStmts()) {
-			stmt.analyze(funcMap, rectypeMap, varAndParamMap);
+		if (funcDecl.getRetType() instanceof VoidType) {
+			for (Statement stmt : funcDecl.getStmts()) {
+				if (stmt instanceof ReturnExpression) {
+					throw new SemanticAnalysisException("void function cant return expression", progAST);
+				} else if (stmt instanceof Return) {
+					break;
+				}
+				stmt.analyze(funcMap, rectypeMap, varAndParamMap);
+			}
+		} else {
+			Statement finalStmt = funcDecl.getStmts().get(funcDecl.getStmts().size()-1);
+			int stmtId = 0;
+			if(finalStmt instanceof ReturnExpression || finalStmt instanceof IfThenElse) {
+				for(Statement stmt : funcDecl.getStmts()) {
+					if(stmtId==funcDecl.getStmts().size()-1) {
+						if(stmt instanceof IfThenElse) {
+							stmt.analyze(funcMap,rectypeMap,varAndParamMap);
+							Statement ifTrueLast = (Statement) ((IfThenElse) stmt).getStmtsTrue().get(((IfThenElse) stmt).getStmtsTrue().size()-1);
+							Statement ifFalseLast = (Statement) ((IfThenElse) stmt).getStmtsFalse().get(((IfThenElse) stmt).getStmtsFalse().size()-1);
+							if(!(ifTrueLast instanceof ReturnExpression) || !(ifFalseLast instanceof ReturnExpression)) {
+								throw new SemanticAnalysisException("needs return for both if and else", progAST);
+							} else {
+								Type ifTrueLastRet = ((ReturnExpression) ifTrueLast).getExpr().analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
+								Type ifFalseLastRet = ((ReturnExpression) ifFalseLast).getExpr().analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
+								if(!ifTrueLastRet.toString().equals(funcDecl.getRetType().toString()) || !ifFalseLastRet.toString().equals(funcDecl.getRetType().toString())) {
+									throw new SemanticAnalysisException("return type in ifthenelse is incorrect", progAST);
+								}
+							}
+						} else {
+							Type returnType = ((ReturnExpression) stmt).getExpr().analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
+							if(!returnType.toString().equals(funcDecl.getRetType().toString())) {
+								throw new SemanticAnalysisException("return type is incorrect", progAST);
+							}
+						}
+					} else {
+						if (stmt instanceof Return) {
+							throw new SemanticAnalysisException("cant return in the middle of nonvoid function", progAST);
+						}
+						stmt.analyze(funcMap, rectypeMap, varAndParamMap);
+						stmtId++;
+					}
+				}
+			} else {
+				throw new SemanticAnalysisException("nonvoid function must return expression", progAST);
+			}
 		}
+
+		// Perform semantic analysis on the function body
+//		for (Statement stmt : funcDecl.getStmts()) {
+//			stmt.analyze(funcMap, rectypeMap, varAndParamMap);
+//		}
 	}
 
 

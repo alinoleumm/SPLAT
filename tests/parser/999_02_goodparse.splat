@@ -1,5 +1,7 @@
 program
 
+    A : Integer[3][2][1];
+
 	donothing(w : Boolean, x : Integer) : Integer is
 		x : Integer;
 	begin

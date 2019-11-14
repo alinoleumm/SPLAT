@@ -6,6 +6,8 @@ import splat.parser.elements.Statement;
 import splat.parser.elements.Type;
 import splat.parser.elements.declarations.FunctionDecl;
 import splat.parser.elements.declarations.RectypeDecl;
+import splat.parser.elements.types.BooleanType;
+import splat.semanticanalyzer.SemanticAnalysisException;
 
 import java.util.List;
 import java.util.Map;
@@ -29,8 +31,15 @@ public class WhileLoop extends Statement {
         return stmts;
     }
 
-    public void analyze(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) {
-
+    public void analyze(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) throws SemanticAnalysisException {
+        Type exprType = expr.analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
+        if(exprType instanceof BooleanType) {
+            for(Statement stmt : stmts) {
+                stmt.analyze(funcMap,rectypeMap,varAndParamMap);
+            }
+        } else {
+            throw new SemanticAnalysisException("wrong condition in while loop", this);
+        }
     }
 
     public String toString() {

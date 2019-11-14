@@ -10,7 +10,7 @@ public class VoidType extends Type {
     }
 
     public String toString() {
-        return "null";
+        return "void";
     }
 
 }

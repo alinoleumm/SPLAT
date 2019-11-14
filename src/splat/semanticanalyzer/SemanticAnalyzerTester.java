@@ -2,6 +2,8 @@ package splat.semanticanalyzer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import splat.lexer.LexException;
@@ -50,6 +52,7 @@ public class SemanticAnalyzerTester {
 		}
 
 		File[] testFiles = testDir.listFiles();
+		Arrays.sort(testFiles, Comparator.comparing(File::getName));
 
 		System.out.println("success");
 

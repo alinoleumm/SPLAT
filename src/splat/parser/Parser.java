@@ -456,25 +456,27 @@ public class Parser {
 		return param;
 	}
 
+	private ArrayType parseArrayType(Token tok, Type type) throws ParseException {
+		checkNext("[");
+		checkNext("]");
+		if(peekNext("[")) {
+			return parseArrayType(tok, new ArrayType(tok, type));
+		} else {
+			return new ArrayType(tok, type);
+		}
+	}
+
 	private Type parseType(Token tok) throws ParseException {
 		if(peekNext("[")) {
 			if(tok.toString().equals("Integer")) {
-				checkNext("[");
-				checkNext("]");
-				return new ArrayType(tok, new IntegerType(tok));
+				return parseArrayType(tok, new IntegerType(tok));
 			} else if(tok.toString().equals("Boolean")) {
-				checkNext("[");
-				checkNext("]");
-				return new ArrayType(tok, new BooleanType(tok));
+				return parseArrayType(tok, new BooleanType(tok));
 			} else if(tok.toString().equals("String")) {
-				checkNext("[");
-				checkNext("]");
-				return new ArrayType(tok, new StringType(tok));
+				return parseArrayType(tok, new StringType(tok));
 			} else if(isLabel(tok)) {
-				checkNext("[");
-				checkNext("]");
 				String token = parseLabel(tok);
-				return new ArrayType(tok, new RecType(tok, token));
+				return parseArrayType(tok, new RecType(tok, token));
 			} else {
 				throw new ParseException("Illegal type", tok);
 			}
@@ -485,60 +487,44 @@ public class Parser {
 				return new BooleanType(tok);
 			} else if(tok.toString().equals("String")) {
 				return new StringType(tok);
+			} else if(tok.toString().equals("void")) {
+				return new VoidType(tok);
 			} else if(isLabel(tok)) {
 				String token = parseLabel(tok);
 				return new RecType(tok, token);
-			} else if(tok.toString().equals("void")) {
-				return new VoidType(tok);
 			} else {
 				throw new ParseException("Illegal type", tok);
 			}
 		}
 	}
 
+	private ArrayVarType parseArrayVarType(Token tok, VarType varType) throws ParseException {
+		checkNext("[");
+		String intToken = tokens.remove(0).toString();
+		if(intToken.matches("[1-9][0-9]*|0")) {
+			IntLiteral intLit = new IntLiteral(tok, Integer.parseInt(intToken));
+			checkNext("]");
+			if(peekNext("[")) {
+				return parseArrayVarType(tok, new ArrayVarType(tok, varType, intLit));
+			} else {
+				return new ArrayVarType(tok, varType, intLit);
+			}
+		} else {
+			throw new ParseException("Illegal int literal", tok);
+		}
+	}
+
 	private VarType parseVarType(Token tok) throws ParseException {
 		if(peekNext("[")) {
 			if(tok.toString().equals("Integer")) {
-				tokens.remove(0);
-				String intToken = tokens.remove(0).toString();
-				if(intToken.matches("[1-9][0-9]*|0")) {
-					IntLiteral intLit = new IntLiteral(tok, Integer.parseInt(intToken));
-					checkNext("]");
-					return new ArrayVarType(tok, new IntegerVarType(tok), intLit);
-				} else {
-					throw new ParseException("Illegal int literal", tok);
-				}
+				return parseArrayVarType(tok, new IntegerVarType(tok));
 			} else if(tok.toString().equals("Boolean")) {
-				tokens.remove(0);
-				String intToken = tokens.remove(0).toString();
-				if(intToken.matches("[1-9][0-9]*|0")) {
-					IntLiteral intLit = new IntLiteral(tok, Integer.parseInt(intToken));
-					checkNext("]");
-					return new ArrayVarType(tok, new BooleanVarType(tok), intLit);
-				} else {
-					throw new ParseException("Illegal int literal", tok);
-				}
+				return parseArrayVarType(tok, new BooleanVarType(tok));
 			} else if(tok.toString().equals("String")) {
-				tokens.remove(0);
-				String intToken = tokens.remove(0).toString();
-				if(intToken.matches("[1-9][0-9]*|0")) {
-					IntLiteral intLit = new IntLiteral(tok, Integer.parseInt(intToken));
-					checkNext("]");
-					return new ArrayVarType(tok, new StringVarType(tok), intLit);
-				} else {
-					throw new ParseException("Illegal int literal", tok);
-				}
+				return parseArrayVarType(tok, new StringVarType(tok));
 			} else if(isLabel(tok)) {
-				tokens.remove(0);
 				String token = parseLabel(tok);
-				String intToken = tokens.remove(0).toString();
-				if(intToken.matches("[1-9][0-9]*|0")) {
-					IntLiteral intLit = new IntLiteral(tok, Integer.parseInt(intToken));
-					checkNext("]");
-					return new ArrayVarType(tok, new RecVarType(tok, token), intLit);
-				} else {
-					throw new ParseException("Illegal int literal", tok);
-				}
+				return parseArrayVarType(tok, new RecVarType(tok, token));
 			} else {
 				throw new ParseException("Illegal type", tok);
 			}

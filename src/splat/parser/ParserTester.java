@@ -2,6 +2,8 @@ package splat.parser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import splat.Splat;
@@ -49,6 +51,7 @@ public class ParserTester {
 		}
 
 		File[] testFiles = testDir.listFiles();
+		Arrays.sort(testFiles, Comparator.comparing(File::getName));
 
 		System.out.println("success");
 

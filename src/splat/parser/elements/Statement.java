@@ -3,6 +3,7 @@ package splat.parser.elements;
 import splat.lexer.Token;
 import splat.parser.elements.declarations.FunctionDecl;
 import splat.parser.elements.declarations.RectypeDecl;
+import splat.semanticanalyzer.SemanticAnalysisException;
 
 import java.util.Map;
 
@@ -22,7 +23,7 @@ public abstract class Statement extends ASTElement {
 	 */
 	 public abstract void analyze(Map<String, FunctionDecl> funcMap,
 								  Map<String, RectypeDecl> rectypeMap,
-								  Map<String, Type> varAndParamMap);
+								  Map<String, Type> varAndParamMap) throws SemanticAnalysisException;
 	
 	/**
 	 * This will be needed for Phase 4 - this abstract method will need to be

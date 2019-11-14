@@ -4,19 +4,23 @@ import splat.lexer.Token;
 
 public abstract class ASTElement {
 
-	private int line;
-	private int column;
+	private Token tok;
+//	private int line;
+//	private int column;
 	
 	public ASTElement(Token tok) {
-		this.line = tok.getLine();
-		this.column = tok.getColumn();
+		this.tok = tok;
+//		this.line = tok.getLine();
+//		this.column = tok.getColumn();
 	}
+
+	public Token getToken() { return tok; }
 	
 	public int getLine() {
-		return line;
+		return tok.getLine();
 	}
-	
+
 	public int getColumn() {
-		return column;
+		return tok.getColumn();
 	}
 }

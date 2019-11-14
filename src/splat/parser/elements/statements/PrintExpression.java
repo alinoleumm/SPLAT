@@ -6,6 +6,7 @@ import splat.parser.elements.Statement;
 import splat.parser.elements.Type;
 import splat.parser.elements.declarations.FunctionDecl;
 import splat.parser.elements.declarations.RectypeDecl;
+import splat.semanticanalyzer.SemanticAnalysisException;
 
 import java.util.Map;
 
@@ -22,8 +23,8 @@ public class PrintExpression extends Statement {
         return expr;
     }
 
-    public void analyze(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) {
-
+    public void analyze(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) throws SemanticAnalysisException {
+        expr.analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
     }
 
     public String toString() {

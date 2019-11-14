@@ -6,6 +6,7 @@ import splat.parser.elements.LabelAccess;
 import splat.parser.elements.Type;
 import splat.parser.elements.declarations.FunctionDecl;
 import splat.parser.elements.declarations.RectypeDecl;
+import splat.semanticanalyzer.SemanticAnalysisException;
 
 import java.util.Map;
 
@@ -22,8 +23,8 @@ public class SingleLabelAccess extends Expression {
         return labelAccess;
     }
 
-    public Type analyzeAndGetType(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) {
-        return null;
+    public Type analyzeAndGetType(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) throws SemanticAnalysisException {
+        return labelAccess.analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
     }
 
     public String toString() {

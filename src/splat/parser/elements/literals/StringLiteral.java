@@ -5,6 +5,7 @@ import splat.parser.elements.Type;
 import splat.parser.elements.declarations.FunctionDecl;
 import splat.parser.elements.declarations.RectypeDecl;
 import splat.parser.elements.other.Literal;
+import splat.parser.elements.types.StringType;
 
 import java.util.Map;
 
@@ -22,7 +23,7 @@ public class StringLiteral extends Literal {
     }
 
     public Type analyzeAndGetType(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) {
-        return null;
+        return new StringType(this.getToken());
     }
 
     public String toString() {

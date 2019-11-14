@@ -7,6 +7,7 @@ import splat.parser.elements.Statement;
 import splat.parser.elements.Type;
 import splat.parser.elements.declarations.FunctionDecl;
 import splat.parser.elements.declarations.RectypeDecl;
+import splat.semanticanalyzer.SemanticAnalysisException;
 
 import java.util.Map;
 
@@ -29,8 +30,12 @@ public class Assignment extends Statement {
         return expr;
     }
 
-    public void analyze(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) {
-
+    public void analyze(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) throws SemanticAnalysisException {
+        Type labelAccessType = labelAccess.analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
+        Type exprType = expr.analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
+        if(!labelAccessType.toString().equals(exprType.toString())) {
+            throw new SemanticAnalysisException("types of label access and expression dont match", this);
+        }
     }
 
     public String toString() {

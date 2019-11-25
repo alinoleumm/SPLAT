@@ -1,0 +1,12 @@
+program
+	a : Integer;
+	b : Integer;
+	c : Integer;
+begin
+	90, 45, 68
+	while if
+	a := 3;
+	b := a*a;
+	c := 8*b;
+	print c;
+end;

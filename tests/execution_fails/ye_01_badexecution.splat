@@ -1,0 +1,17 @@
+program
+
+	record Point begin
+		x: Integer;
+		y: Integer;
+	end;
+	
+	p1: Point[10];
+		
+begin
+	p1[0].x := 0;
+	p1[0].y := 0;
+	
+	p1[10].x := 0;
+	p1[10].y := 0;
+	print_line; 
+end;

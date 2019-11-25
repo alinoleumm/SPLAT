@@ -11,6 +11,7 @@ import splat.parser.elements.declarations.RectypeDecl;
 import splat.parser.elements.declarations.VariableDecl;
 import splat.parser.elements.other.FieldDeclaration;
 import splat.parser.elements.other.Parameter;
+import splat.parser.elements.statements.IfThen;
 import splat.parser.elements.statements.IfThenElse;
 import splat.parser.elements.statements.Return;
 import splat.parser.elements.statements.ReturnExpression;
@@ -136,6 +137,34 @@ public class SemanticAnalyzer {
 		}
 	}
 
+	private void checkIfThenElse(Statement stmt, Map<String, Type> varAndParamMap, FunctionDecl funcDecl) throws SemanticAnalysisException {
+		Statement ifTrueLast = (Statement) ((IfThenElse) stmt).getStmtsTrue().get(((IfThenElse) stmt).getStmtsTrue().size()-1);
+		Statement ifFalseLast = (Statement) ((IfThenElse) stmt).getStmtsFalse().get(((IfThenElse) stmt).getStmtsFalse().size()-1);
+
+		if(ifTrueLast instanceof IfThenElse) {
+			checkIfThenElse(ifTrueLast, varAndParamMap, funcDecl);
+		} else if(ifTrueLast instanceof ReturnExpression) {
+			Type ifTrueLastRet = ((ReturnExpression) ifTrueLast).getExpr().analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
+			if(!ifTrueLastRet.toString().equals(funcDecl.getRetType().toString())) {
+				throw new SemanticAnalysisException("return type in ifthenelse is incorrect", progAST);
+			}
+		} else {
+			throw new SemanticAnalysisException("needs return for both if and else", progAST);
+		}
+
+		if(ifFalseLast instanceof IfThenElse) {
+			checkIfThenElse(ifFalseLast, varAndParamMap, funcDecl);
+		} else if(ifFalseLast instanceof ReturnExpression) {
+			Type ifFalseLastRet = ((ReturnExpression) ifFalseLast).getExpr().analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
+			if(!ifFalseLastRet.toString().equals(funcDecl.getRetType().toString())) {
+				throw new SemanticAnalysisException("return type in ifthenelse is incorrect", progAST);
+			}
+		} else {
+			throw new SemanticAnalysisException("needs return for both if and else", progAST);
+		}
+
+	}
+
 	private void analyzeFuncDecl(FunctionDecl funcDecl) throws SemanticAnalysisException {
 
 		// Checks to make sure we don't use the same labels more than once
@@ -167,17 +196,7 @@ public class SemanticAnalyzer {
 					if(stmtId==funcDecl.getStmts().size()-1) {
 						if(stmt instanceof IfThenElse) {
 							stmt.analyze(funcMap,rectypeMap,varAndParamMap);
-							Statement ifTrueLast = (Statement) ((IfThenElse) stmt).getStmtsTrue().get(((IfThenElse) stmt).getStmtsTrue().size()-1);
-							Statement ifFalseLast = (Statement) ((IfThenElse) stmt).getStmtsFalse().get(((IfThenElse) stmt).getStmtsFalse().size()-1);
-							if(!(ifTrueLast instanceof ReturnExpression) || !(ifFalseLast instanceof ReturnExpression)) {
-								throw new SemanticAnalysisException("needs return for both if and else", progAST);
-							} else {
-								Type ifTrueLastRet = ((ReturnExpression) ifTrueLast).getExpr().analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
-								Type ifFalseLastRet = ((ReturnExpression) ifFalseLast).getExpr().analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
-								if(!ifTrueLastRet.toString().equals(funcDecl.getRetType().toString()) || !ifFalseLastRet.toString().equals(funcDecl.getRetType().toString())) {
-									throw new SemanticAnalysisException("return type in ifthenelse is incorrect", progAST);
-								}
-							}
+							checkIfThenElse(stmt,varAndParamMap,funcDecl);
 						} else {
 							Type returnType = ((ReturnExpression) stmt).getExpr().analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
 							if(!returnType.toString().equals(funcDecl.getRetType().toString())) {

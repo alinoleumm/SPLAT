@@ -1,0 +1,15 @@
+program
+	logical : Boolean[5];
+	identity(b:Boolean[]) : Boolean[] is 
+	begin
+		
+		return b;
+	end;
+	
+
+begin
+	
+	
+	
+	print "Hello!";
+end;

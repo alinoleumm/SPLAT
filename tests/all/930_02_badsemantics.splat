@@ -1,0 +1,12 @@
+program
+increment(number : Integer) : Integer
+is
+n : Integer; 
+begin
+n := (number + 1);
+return n;
+end;
+value : Boolean;
+begin
+value := increment(34);
+end;

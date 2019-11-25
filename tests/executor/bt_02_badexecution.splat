@@ -1,0 +1,12 @@
+program
+	record day begin
+		name:String;
+		year:Integer;
+	end;
+	
+	Tuesday:day;
+
+begin
+	
+	print Tuesday.year;
+end;

@@ -1,5 +1,7 @@
 package splat.parser.elements.statements;
 
+import splat.executor.ReturnFromCall;
+import splat.executor.Value;
 import splat.lexer.Token;
 import splat.parser.elements.Statement;
 import splat.parser.elements.Type;
@@ -16,6 +18,10 @@ public class PrintLine extends Statement {
 
     public void analyze(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) {
 
+    }
+
+    public void execute(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Value> varAndParamMap) throws ReturnFromCall {
+        System.out.print("\n");
     }
 
     public String toString() {

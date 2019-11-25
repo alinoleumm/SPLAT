@@ -1,0 +1,15 @@
+program
+	array : Integer[5];
+	add(s1 : Integer, s2 : Integer) : Integer is 
+	begin
+		return (s1 + s2);
+	end;
+	
+	ind : Integer;
+
+begin
+	array[0] := 3;
+	array [4] := 1;
+	ind := (28 % 11);
+	print add(array[0], array[ind]);
+end;

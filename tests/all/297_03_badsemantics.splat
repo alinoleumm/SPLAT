@@ -1,0 +1,10 @@
+program 
+	a : Integer;
+	c : Boolean;
+	d : Integer;
+	begin
+		a := 1;
+		c := (a + 2);
+		print_line;
+		print c;
+	end;

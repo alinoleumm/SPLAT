@@ -1,0 +1,71 @@
+program
+
+	record Point begin
+		x: Integer;
+		y: Integer;
+	end;
+
+	record Square begin
+		point: Point;
+		w: Integer;
+		h: Integer;
+	end;
+
+	subTractPoints (p1: Point, p2: Point): Point is
+		x1: Integer;
+		x2: Integer;
+		y1: Integer;
+		y2: Integer;
+		result: Point;
+	begin
+		if (p1.x > p2.x) then
+			x1 := p1.x;
+			x2 := p2.x;
+		else
+			x1 := p2.x;
+			x2 := p1.x;
+		end if;
+		
+		if (p1.y > p2.y) then
+			y1 := p1.y;
+			y2 := p2.y;
+		else
+			y1 := p2.y;
+			y2 := p1.y;
+		end if;
+		
+		result.x := (p1.x - p2.x);
+		result.y := (p1.y - p2.y);
+		return result;
+	end;
+	
+	getArea (sq: Square): Integer is
+	begin
+		return (sq.w * sq.h);
+	end; 
+	
+	myPoint1: Point;
+	myPoint2: Point;
+	subPoint: Point;
+	mySquare: Square;
+	area: Integer;
+		
+begin
+	myPoint1.x := 10;
+	myPoint1.y := 0;
+	
+	myPoint2.x := 0;
+	myPoint2.y := 10;
+	
+	subPoint := subTractPoints(myPoint1, myPoint2);
+	mySquare.point.x := myPoint1.x;
+	mySquare.point.y := 0;
+	mySquare.w := 10;
+	mySquare.h := 10;
+	mySquare.point := myPoint2;
+	
+	area := getArea(mySquare);
+	
+	print area;
+	print_line; 
+end;

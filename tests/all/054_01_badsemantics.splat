@@ -1,0 +1,13 @@
+program
+
+begin
+
+	x := 10;
+	Factor := 1;
+	while (Val <= 10) do
+		Factor := (Factor*Val);
+	end while;
+	
+	print Factor;
+	
+end;

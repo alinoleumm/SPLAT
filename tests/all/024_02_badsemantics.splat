@@ -1,0 +1,9 @@
+program
+    abc(a : Integer, b:Integer) : Integer is
+    begin
+        return (a + b);
+    end;
+
+begin
+    print abc(12);
+end;

@@ -1,5 +1,8 @@
 package splat.parser.elements.expressions;
 
+import splat.executor.ExecutionException;
+import splat.executor.ReturnFromCall;
+import splat.executor.Value;
 import splat.lexer.Token;
 import splat.parser.elements.Expression;
 import splat.parser.elements.Type;
@@ -25,6 +28,10 @@ public class SingleLiteral extends Expression {
 
     public Type analyzeAndGetType(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) throws SemanticAnalysisException {
         return literal.analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
+    }
+
+    public Value evaluate(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Value> varAndParamMap) throws ExecutionException, ReturnFromCall {
+        return literal.evaluate(funcMap,rectypeMap,varAndParamMap);
     }
 
     public String toString() {

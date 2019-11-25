@@ -1,5 +1,9 @@
 package splat.parser.elements.accesses;
 
+import splat.executor.ExecutionException;
+import splat.executor.ReturnFromCall;
+import splat.executor.Value;
+import splat.executor.values.RecordValue;
 import splat.lexer.Token;
 import splat.parser.elements.LabelAccess;
 import splat.parser.elements.Type;
@@ -78,6 +82,24 @@ public class RecordFieldAccess extends LabelAccess {
             }
         } else {
             throw new SemanticAnalysisException("not a rectype", this);
+        }
+    }
+
+    // TODO: recursive array accesses???
+    public Value evaluate(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Value> varAndParamMap) throws ExecutionException, ReturnFromCall {
+        Value val = labelAccess.evaluate(funcMap,rectypeMap,varAndParamMap);
+        if(val!=null) {
+            if(val instanceof RecordValue) {
+                if(((RecordValue) val).getValue().containsKey(field)) {
+                    return ((RecordValue) val).getValue().get(field);
+                } else {
+                    throw new ExecutionException("no such field", this);
+                }
+            } else {
+                throw new ExecutionException("not a record", this);
+            }
+        } else {
+            throw new ExecutionException("cant access null struct!", this);
         }
     }
 

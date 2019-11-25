@@ -1,0 +1,17 @@
+program
+	array : Boolean[3];
+	i : Integer;
+
+begin
+	i := 0;
+
+	while (i<3) do
+		if array[i] then
+			print "A";
+		else
+			print "B";
+		end if;
+		print_line;
+		i := (i+1);
+	end while;
+end;

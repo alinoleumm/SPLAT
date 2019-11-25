@@ -1,0 +1,7 @@
+program 
+	a : Integer;
+	c : Integer;
+	start
+		c := a + 2;
+		print c;
+	end;

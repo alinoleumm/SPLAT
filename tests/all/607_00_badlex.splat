@@ -1,0 +1,11 @@
+program
+x : Integer;
+y : Boolean;
+z : Integer;
+begin?
+x :=5;
+y := True;
+z :=(x*y);
+print z;
+end;
+

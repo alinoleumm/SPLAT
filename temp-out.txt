@@ -1,0 +1,6 @@
+class splat.parser.elements.statements.Assignment
+class splat.parser.elements.statements.PrintExpression
+3
+class splat.parser.elements.statements.PrintLine
+
+

@@ -1,5 +1,6 @@
 package splat.parser.elements.literals;
 
+import splat.executor.Value;
 import splat.lexer.Token;
 import splat.parser.elements.Type;
 import splat.parser.elements.declarations.FunctionDecl;
@@ -17,6 +18,11 @@ public class RectypeLiteral extends Literal {
 
     public Type analyzeAndGetType(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) {
         return new RecType(this.getToken(), "null");
+    }
+
+    @Override
+    public Value evaluate(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Value> varAndParamMap) {
+        return null;
     }
 
     public String toString() {

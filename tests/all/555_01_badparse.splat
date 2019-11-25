@@ -1,0 +1,10 @@
+program
+	myFunction(): Integer is
+	begin
+		print "at myFunction()";
+	end;
+
+begin
+	myFuction((n+1));
+	parseErrorFuction(n+1);
+end;

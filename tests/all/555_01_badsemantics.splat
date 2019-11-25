@@ -1,0 +1,19 @@
+program
+
+x : Integer;
+y : Integer;
+c : Boolean;
+
+begin 
+
+x := 1;
+y := 2;
+c := true;
+
+if c then
+	c := (x+y);
+else	
+	c := (x*y);	
+end if;
+
+end;

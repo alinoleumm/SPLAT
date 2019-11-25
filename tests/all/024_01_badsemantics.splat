@@ -1,0 +1,20 @@
+program
+    abc(a : Integer, b:Integer) : Boolean is
+    begin
+        return (a + b);
+    end;
+
+begin
+    x := 5;
+    y := ((a - 1) * 5);
+
+    is_sum := true;
+
+    if (is_sum = true) then
+        sum := (a + b);
+    else
+        sum := (-1);
+    end if;
+
+    print sum;
+end;

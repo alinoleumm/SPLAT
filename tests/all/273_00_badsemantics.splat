@@ -1,0 +1,11 @@
+program 
+	x : Integer;
+	y : Integer;
+	z : Integer;
+	a : Boolean;
+begin
+	z := 3;
+	y := (x + 5);
+	x := (((2 * z) + y)*a);
+	print x;
+end;

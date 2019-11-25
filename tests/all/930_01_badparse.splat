@@ -1,0 +1,9 @@
+program
+output_printer(number : Integer) : void
+is 
+begin
+echo number;
+end;
+begin
+output_printer(1);
+end;

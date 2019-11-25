@@ -1,0 +1,29 @@
+program
+	fib : Integer;
+	first : Integer;
+	second : Integer;
+	i_new : Integer;
+	i : Integer;
+begin
+	fib := 10;
+
+	first := 0;
+	second := 1;
+	i := 0;
+
+	while if (i < fib) then
+	do
+		if i <= 1 then
+			i_new := i;
+		else 
+			i_new := (first + second);
+			first := second;
+			second := i_new;
+		end if;
+
+		print i_new;
+		print_line;
+		i := (i + 1);
+	end while;
+
+end;

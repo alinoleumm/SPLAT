@@ -1,0 +1,9 @@
+program
+    myFunction() : Integer is
+        // illegal comment
+    begin
+        print "myFunction() called";
+    end;
+begin
+    print "body of the programm"
+end;

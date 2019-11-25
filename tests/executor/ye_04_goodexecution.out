@@ -1,0 +1,6 @@
+printing points values before change:
+point1(10, 10)
+point2(20, 20)
+printing points values after change:
+point1(20, 20)
+point2(20, 20)

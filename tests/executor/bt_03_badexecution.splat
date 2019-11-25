@@ -1,0 +1,18 @@
+program
+	
+	array:Integer[5];
+	i:Integer;
+	size:Integer;
+	divisor:Integer;
+
+begin
+	i:=0;
+	size:=5;
+	divisor:=3;
+	
+	while (i<size) do
+		print (array[i] / divisor);
+		i:= (i+1);
+		divisor := (divisor - 1);
+	end while;
+end;

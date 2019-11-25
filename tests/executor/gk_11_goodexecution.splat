@@ -1,0 +1,31 @@
+program
+	
+	record point 
+	begin
+		x: Integer;
+		y: Integer;
+	end;
+	k: Integer;
+	donothing(x : Integer) : Integer is
+	y: Integer;
+	begin
+		if (x = 100) then 
+		return 0;
+		else 
+		x := (x + 1);
+		return donothing2(x);
+	 	end if;
+	end ;
+	donothing2(x : Integer) : Integer is
+	begin
+		if (x = 100) then
+		 return 0;
+		else 
+		x := (x + 1);
+		return donothing(x);
+	 	end if;
+	end ;
+begin
+	k := donothing(2);
+	print k;
+end;

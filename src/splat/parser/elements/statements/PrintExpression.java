@@ -1,5 +1,8 @@
 package splat.parser.elements.statements;
 
+import splat.executor.ExecutionException;
+import splat.executor.ReturnFromCall;
+import splat.executor.Value;
 import splat.lexer.Token;
 import splat.parser.elements.Expression;
 import splat.parser.elements.Statement;
@@ -25,6 +28,10 @@ public class PrintExpression extends Statement {
 
     public void analyze(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) throws SemanticAnalysisException {
         expr.analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
+    }
+
+    public void execute(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Value> varAndParamMap) throws ReturnFromCall, ExecutionException {
+        System.out.print(expr.evaluate(funcMap,rectypeMap,varAndParamMap));
     }
 
     public String toString() {

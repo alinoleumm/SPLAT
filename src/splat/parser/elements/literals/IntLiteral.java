@@ -1,5 +1,7 @@
 package splat.parser.elements.literals;
 
+import splat.executor.Value;
+import splat.executor.values.IntegerValue;
 import splat.lexer.Token;
 import splat.parser.elements.Type;
 import splat.parser.elements.declarations.FunctionDecl;
@@ -24,6 +26,10 @@ public class IntLiteral extends Literal {
 
     public Type analyzeAndGetType(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) {
         return new IntegerType(this.getToken());
+    }
+
+    public Value evaluate(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Value> varAndParamMap) {
+        return new IntegerValue(intLiteral);
     }
 
     public String toString() {

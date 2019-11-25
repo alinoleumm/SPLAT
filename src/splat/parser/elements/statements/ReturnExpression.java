@@ -1,5 +1,8 @@
 package splat.parser.elements.statements;
 
+import splat.executor.ExecutionException;
+import splat.executor.ReturnFromCall;
+import splat.executor.Value;
 import splat.lexer.Token;
 import splat.parser.elements.Expression;
 import splat.parser.elements.Statement;
@@ -24,6 +27,11 @@ public class ReturnExpression extends Statement {
 
     public void analyze(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) {
 
+    }
+
+    public void execute(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Value> varAndParamMap) throws ReturnFromCall, ExecutionException {
+        Value val = expr.evaluate(funcMap,rectypeMap,varAndParamMap);
+        throw new ReturnFromCall(val);
     }
 
     public String toString() {

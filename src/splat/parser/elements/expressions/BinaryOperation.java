@@ -1,15 +1,21 @@
 package splat.parser.elements.expressions;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import splat.executor.ExecutionException;
+import splat.executor.ReturnFromCall;
+import splat.executor.Value;
+import splat.executor.values.BooleanValue;
+import splat.executor.values.IntegerValue;
+import splat.executor.values.RecordValue;
 import splat.lexer.Token;
 import splat.parser.elements.Expression;
 import splat.parser.elements.Type;
 import splat.parser.elements.declarations.FunctionDecl;
 import splat.parser.elements.declarations.RectypeDecl;
+import splat.parser.elements.types.ArrayType;
 import splat.parser.elements.types.BooleanType;
 import splat.parser.elements.types.IntegerType;
-import splat.parser.elements.types.VoidType;
 import splat.parser.elements.types.RecType;
+import splat.parser.elements.vartypes.ArrayVarType;
 import splat.parser.elements.vartypes.BooleanVarType;
 import splat.parser.elements.vartypes.IntegerVarType;
 import splat.parser.elements.vartypes.RecVarType;
@@ -42,9 +48,33 @@ public class BinaryOperation extends Expression {
         return exprRight;
     }
 
+    private Type getBaseType(Type type)  {
+        if(type instanceof ArrayType) {
+            Type inType = ((ArrayType) type).getType();
+            if(inType instanceof ArrayType) {
+                return getBaseType(inType);
+            } else {
+                return inType;
+            }
+        } else {
+            Type inType = ((ArrayVarType) type).getVarType();
+            if(inType instanceof ArrayVarType) {
+                return getBaseType(inType);
+            } else {
+                return inType;
+            }
+        }
+    }
+
     public Type analyzeAndGetType(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) throws SemanticAnalysisException {
         Type leftType = exprLeft.analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
         Type rightType = exprRight.analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
+        if(leftType instanceof ArrayType || leftType instanceof ArrayVarType) {
+            leftType = getBaseType(leftType);
+        }
+        if(rightType instanceof ArrayType || rightType instanceof ArrayVarType) {
+            rightType = getBaseType(rightType);
+        }
         if(binaryOp.equals("+") || binaryOp.equals("-") || binaryOp.equals("*") || binaryOp.equals("/") || binaryOp.equals("%")) {
             if ((leftType instanceof IntegerType || leftType instanceof IntegerVarType) && (rightType instanceof IntegerType || rightType instanceof IntegerVarType)) {
                 return new IntegerType(this.getToken());
@@ -71,6 +101,79 @@ public class BinaryOperation extends Expression {
             }
         } else {
             throw new SemanticAnalysisException("Illegal binary op", this);
+        }
+    }
+
+    public Value evaluate(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Value> varAndParamMap) throws ExecutionException, ReturnFromCall {
+        Value left = exprLeft.evaluate(funcMap,rectypeMap,varAndParamMap);
+        Value right = exprRight.evaluate(funcMap,rectypeMap,varAndParamMap);
+        if(binaryOp.equals("and") || binaryOp.equals("or")) {
+            if((left instanceof BooleanValue) && (right instanceof BooleanValue)) {
+                if(binaryOp.equals("and")) {
+                    if (!((BooleanValue) left).isValue() || !((BooleanValue) right).isValue()) {
+                        return new BooleanValue(false);
+                    } else {
+                        return new BooleanValue(true);
+                    }
+                } else {
+                    if(!((BooleanValue) left).isValue() && !((BooleanValue) right).isValue()) {
+                        return new BooleanValue(false);
+                    } else {
+                        return new BooleanValue(true);
+                    }
+                }
+            } else {
+                throw new ExecutionException("not boolean", this);
+            }
+        } if(binaryOp.equals("+") || binaryOp.equals("-") || binaryOp.equals("*") || binaryOp.equals("/") || binaryOp.equals("%")) {
+            if((left instanceof IntegerValue) && (right instanceof IntegerValue)) {
+                int res;
+                if(binaryOp.equals("+")) {
+                    res = ((IntegerValue) left).getValue() + ((IntegerValue) right).getValue();
+                } else if(binaryOp.equals("-")) {
+                    res = ((IntegerValue) left).getValue() - ((IntegerValue) right).getValue();
+                } else if(binaryOp.equals("*")) {
+                    res = ((IntegerValue) left).getValue() * ((IntegerValue) right).getValue();
+                } else if(binaryOp.equals("/")) {
+                    if(((IntegerValue) right).getValue()==0) {
+                        throw new ExecutionException("cant divide by 0!!", this);
+                    }
+                    res = ((IntegerValue) left).getValue() / ((IntegerValue) right).getValue();
+                } else {
+                    res = ((IntegerValue) left).getValue() % ((IntegerValue) right).getValue();
+                }
+                return new IntegerValue(res);
+            } else {
+                throw new ExecutionException("not integer", this);
+            }
+        } if(binaryOp.equals(">") || binaryOp.equals("<") || binaryOp.equals(">=") || binaryOp.equals("<=")) {
+            if((left instanceof IntegerValue) && (right instanceof IntegerValue)) {
+                boolean res;
+                if(binaryOp.equals(">")) {
+                    res = ((IntegerValue) left).getValue() > ((IntegerValue) right).getValue();
+                } else if(binaryOp.equals("<")) {
+                    res = ((IntegerValue) left).getValue() < ((IntegerValue) right).getValue();
+                } else if(binaryOp.equals(">=")) {
+                    res = ((IntegerValue) left).getValue() >= ((IntegerValue) right).getValue();
+                } else {
+                    res = ((IntegerValue) left).getValue() <= ((IntegerValue) right).getValue();
+                }
+                return new BooleanValue(res);
+            } else {
+                throw new ExecutionException("not integer", this);
+            }
+        } else {
+            boolean res;
+            if((left instanceof IntegerValue) && (right instanceof IntegerValue)) {
+                res =((IntegerValue) left).getValue() == ((IntegerValue) right).getValue();
+            } else if((left instanceof BooleanValue) && (right instanceof BooleanValue)) {
+                res = ((BooleanValue) left).isValue() == ((BooleanValue) right).isValue();
+            } else if((left instanceof RecordValue) && exprRight.toString().equals("null")) {
+                res = ((RecordValue) left).getValue() == null;
+            } else {
+                throw new ExecutionException("cant compare that", this);
+            }
+            return new BooleanValue(res);
         }
     }
 

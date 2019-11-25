@@ -1,0 +1,17 @@
+program
+    myFunction(param1: Integer,
+               param2: Boolean) : Integer is
+    begin
+        if param2 then
+            print ("param2 is true " + param1);
+        else
+            print "param2 is false";
+        end if;
+        print "myFunction() called";
+    end;
+    myInteger: Integer;
+    myBoolean: Boolean;
+begin
+    print "body of the programm";
+    myFunction(myBoolean, myInteger);
+end;

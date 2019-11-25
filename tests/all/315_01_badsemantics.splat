@@ -1,0 +1,16 @@
+program
+	in_num	: Integer;
+	i : Integer;
+begin
+	in_num := 8;
+	i := in_num;
+
+	while (i > 1)
+	do
+		fact := (fact * i);
+		i := (i - 1);
+	end while;
+
+	print fact;
+	
+end;

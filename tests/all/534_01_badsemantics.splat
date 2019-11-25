@@ -1,0 +1,12 @@
+program
+	a : Integer;
+	b : Integer;
+	c : Integer;
+begin
+	if (a > b) then
+		c := (a - b);
+	else
+		c := (b - a);
+	end if;
+	print d;		
+end;

@@ -1,0 +1,13 @@
+program 
+
+Num:Integer;
+
+GetMod10 (num:Integer) : Integer is
+begin
+	num := (num %  10);
+	return ;
+end; 
+
+begin
+	print GetMod10(Num);
+end; 

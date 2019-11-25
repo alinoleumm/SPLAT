@@ -1,0 +1,7 @@
+program
+
+begin
+
+x:=(not(x+4)+(not(false)));
+
+end;

@@ -1,0 +1,7 @@
+program  
+	b:boo;
+	i=0;
+	while i>5
+	if i=2 then print "nononoh*/-=-)#" end if;
+	i=i+1;
+end;

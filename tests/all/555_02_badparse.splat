@@ -1,0 +1,7 @@
+program
+
+begin
+
+x:=((x+4));
+
+end;

@@ -1,6 +1,8 @@
 package splat.parser.elements.literals;
 
 import com.sun.org.apache.xpath.internal.operations.Bool;
+import splat.executor.Value;
+import splat.executor.values.BooleanValue;
 import splat.lexer.Token;
 import splat.parser.elements.Type;
 import splat.parser.elements.declarations.FunctionDecl;
@@ -25,6 +27,10 @@ public class BoolLiteral extends Literal {
 
     public Type analyzeAndGetType(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Type> varAndParamMap) {
         return new BooleanType(this.getToken());
+    }
+
+    public Value evaluate(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Value> varAndParamMap) {
+        return new BooleanValue(boolLiteral);
     }
 
     public String toString() {

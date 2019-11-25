@@ -1,0 +1,4 @@
+program
+begin
+	print "This is going to cause a problem ;
+end ;

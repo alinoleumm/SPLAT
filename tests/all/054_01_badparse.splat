@@ -1,0 +1,12 @@
+program
+	Factor : Integer;
+	x, Val : Integer;
+begin
+	x := 10;
+	Factor := 1;
+	while (Val <= 10) do
+		Factor = Factor*Val;
+	
+	print Factor;
+	
+end;

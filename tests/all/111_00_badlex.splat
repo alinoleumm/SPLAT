@@ -1,0 +1,11 @@
+prog ! ram  < >
+	a : Integer;
+	b : Integer;
+	c : Integer;
+begin
+	
+	a := 3;
+	b := a*a;
+	c := 8*b;
+	print c;
+end;

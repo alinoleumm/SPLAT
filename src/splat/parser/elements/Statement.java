@@ -1,5 +1,8 @@
 package splat.parser.elements;
 
+import splat.executor.ExecutionException;
+import splat.executor.ReturnFromCall;
+import splat.executor.Value;
 import splat.lexer.Token;
 import splat.parser.elements.declarations.FunctionDecl;
 import splat.parser.elements.declarations.RectypeDecl;
@@ -32,8 +35,8 @@ public abstract class Statement extends ASTElement {
 	 * updating the varAndParamMap.  All three maps may be needed for 
 	 * evaluating any sub-expressions in the statement.
 	 */
-//	 public abstract void execute(Map<String, FunctionDecl> funcMap,
-//								  Map<String, RectypeDecl> rectypeMap,
-//	                              Map<String, Value> varAndParamMap) 
-//										throws ReturnFromCall;   
+	 public abstract void execute(Map<String, FunctionDecl> funcMap,
+								  Map<String, RectypeDecl> rectypeMap,
+	                              Map<String, Value> varAndParamMap)
+             throws ReturnFromCall, ExecutionException;
 }

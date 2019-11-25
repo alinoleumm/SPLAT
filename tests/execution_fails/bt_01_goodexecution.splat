@@ -1,0 +1,21 @@
+program
+	logical : Boolean[5];
+	negate(b:Boolean[]) : Boolean[] is 
+	i:Integer;
+	result:Boolean[5];
+	begin
+		i:=0;
+		while (i<5) do
+			result[i] := (not b[i]);
+			i := (i+1);
+		end while;
+		return result;
+	end;
+	
+
+begin
+	
+	
+	
+	print negate(logical);
+end;

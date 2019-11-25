@@ -1,5 +1,7 @@
 package splat.parser.elements.accesses;
 
+import splat.executor.ExecutionException;
+import splat.executor.Value;
 import splat.lexer.Token;
 import splat.parser.elements.LabelAccess;
 import splat.parser.elements.Type;
@@ -28,6 +30,15 @@ public class VariableOrParameter extends LabelAccess {
             return type;
         } else {
             throw new SemanticAnalysisException("variable not defined", this);
+        }
+    }
+
+    public Value evaluate(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Value> varAndParamMap) throws ExecutionException {
+        if(varAndParamMap.containsKey(label)) {
+            Value val = varAndParamMap.get(label);
+            return val;
+        } else {
+            throw new ExecutionException("variable not defined (execution)", this);
         }
     }
 

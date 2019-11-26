@@ -53,6 +53,7 @@ begin
 	myPoint1 := Point(10, 0);
 	
 	myPoint2 := Point(0, 10);
+
 	
 	subPoint := subTractPoints(myPoint1, myPoint2);
 	mySquare := Square(myPoint1, 0, 0);

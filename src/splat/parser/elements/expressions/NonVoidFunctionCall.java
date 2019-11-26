@@ -77,8 +77,6 @@ public class NonVoidFunctionCall extends Expression {
                     if(paramType instanceof ArrayType) {
                         paramType = getBaseType(paramType);
                     }
-                    System.out.println(argType.getClass().toString());
-                    System.out.println(paramType.getClass().toString());
                     if (!argType.toString().equals(paramType.toString())) {
                         throw new SemanticAnalysisException("Types of arg and param are different", this);
                     }
@@ -98,7 +96,13 @@ public class NonVoidFunctionCall extends Expression {
                 for (int i=0; i<args.size(); i++) {
                     Type argType = args.get(i).analyzeAndGetType(funcMap, rectypeMap, varAndParamMap);
                     Type fieldType = fieldDecls.get(i).getType();
-                    if (argType.getClass()!=fieldType.getClass()) {
+                    if(argType instanceof ArrayType || argType instanceof ArrayVarType) {
+                        argType = getBaseType(argType);
+                    }
+                    if(fieldType instanceof ArrayType) {
+                        fieldType = getBaseType(fieldType);
+                    }
+                    if (!argType.toString().equals(fieldType.toString())) {
                         throw new SemanticAnalysisException("Types of arg and field are different", this);
                     }
                 }
@@ -109,49 +113,50 @@ public class NonVoidFunctionCall extends Expression {
         }
     }
 
-    private List<Value> arrayInit(VarType t) {
-        int arraySize = ((ArrayVarType) t).getIntLiteral().getIntLiteral();
-        List<Value> arrayList = new ArrayList<Value>();
-        if(((ArrayVarType) t).getVarType() instanceof ArrayVarType) {
-            for(int i=0; i<arraySize; i++) {
-                arrayList.add(new ArrayValue(arrayInit(((ArrayVarType) t).getVarType())));
-            }
-        } else if(((ArrayVarType) t).getVarType() instanceof IntegerVarType) {
-            for(int i=0; i<arraySize; i++) {
-                arrayList.add(new IntegerValue(0));
-            }
-        } else if(((ArrayVarType) t).getVarType() instanceof BooleanVarType) {
-            for(int i=0; i<arraySize; i++) {
-                arrayList.add(new BooleanValue(false));
-            }
-        } else if(((ArrayVarType) t).getVarType() instanceof StringVarType) {
-            for(int i=0; i<arraySize; i++) {
-                arrayList.add(new StringValue(""));
-            }
-        } else {
-            for(int i=0; i<arraySize; i++) {
-                arrayList.add(null);
-            }
-        }
-        return arrayList;
-    }
+//    private List<Value> arrayInit(VarType t) {
+//        int arraySize = ((ArrayVarType) t).getIntLiteral().getIntLiteral();
+//        List<Value> arrayList = new ArrayList<Value>();
+//        if(((ArrayVarType) t).getVarType() instanceof ArrayVarType) {
+//            for(int i=0; i<arraySize; i++) {
+//                arrayList.add(new ArrayValue(arrayInit(((ArrayVarType) t).getVarType())));
+//            }
+//        } else if(((ArrayVarType) t).getVarType() instanceof IntegerVarType) {
+//            for(int i=0; i<arraySize; i++) {
+//                arrayList.add(new IntegerValue(0));
+//            }
+//        } else if(((ArrayVarType) t).getVarType() instanceof BooleanVarType) {
+//            for(int i=0; i<arraySize; i++) {
+//                arrayList.add(new BooleanValue(false));
+//            }
+//        } else if(((ArrayVarType) t).getVarType() instanceof StringVarType) {
+//            for(int i=0; i<arraySize; i++) {
+//                arrayList.add(new StringValue(""));
+//            }
+//        } else {
+//            for(int i=0; i<arraySize; i++) {
+//                arrayList.add(null);
+//            }
+//        }
+//        return arrayList;
+//    }
 
     public Value evaluate(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Value> varAndParamMap) throws ExecutionException, ReturnFromCall {
         if(funcMap.containsKey(label)) {
             List<VariableDecl> decls = funcMap.get(label).getVarDecls();
             Map<String, Value> funcVarAndParam = new HashMap<String, Value>();
             for(VariableDecl varDecl : decls) {
-                if(varDecl.getVarType() instanceof IntegerVarType) {
-                    funcVarAndParam.put(varDecl.getLabel(), new IntegerValue(0));
-                } else if(varDecl.getVarType() instanceof BooleanVarType) {
-                    funcVarAndParam.put(varDecl.getLabel(), new BooleanValue(false));
-                } else if(varDecl.getVarType() instanceof StringVarType) {
-                    funcVarAndParam.put(varDecl.getLabel(), new StringValue(""));
-                } else if(varDecl.getVarType() instanceof ArrayVarType) {
-                    funcVarAndParam.put(varDecl.getLabel(), new ArrayValue(arrayInit(varDecl.getVarType())));
-                } else {
-                    funcVarAndParam.put(varDecl.getLabel(),null);
-                }
+                funcVarAndParam.put(varDecl.getLabel(),varDecl.getVarType().getInitialValue());
+//                if(varDecl.getVarType() instanceof IntegerVarType) {
+//                    funcVarAndParam.put(varDecl.getLabel(), new IntegerValue(0));
+//                } else if(varDecl.getVarType() instanceof BooleanVarType) {
+//                    funcVarAndParam.put(varDecl.getLabel(), new BooleanValue(false));
+//                } else if(varDecl.getVarType() instanceof StringVarType) {
+//                    funcVarAndParam.put(varDecl.getLabel(), new StringValue(""));
+//                } else if(varDecl.getVarType() instanceof ArrayVarType) {
+//                    funcVarAndParam.put(varDecl.getLabel(), new ArrayValue(arrayInit(varDecl.getVarType())));
+//                } else {
+//                    funcVarAndParam.put(varDecl.getLabel(),null);
+//                }
             }
             List<Parameter> params = funcMap.get(label).getParams();
             for(int i=0; i<args.size(); i++) {

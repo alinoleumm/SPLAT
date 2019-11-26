@@ -200,7 +200,11 @@ public class SemanticAnalyzer {
 						} else {
 							Type returnType = ((ReturnExpression) stmt).getExpr().analyzeAndGetType(funcMap,rectypeMap,varAndParamMap);
 							if(!returnType.toString().equals(funcDecl.getRetType().toString())) {
-								throw new SemanticAnalysisException("return type is incorrect", progAST);
+								if((returnType instanceof ArrayVarType || returnType instanceof ArrayType) && (funcDecl.getRetType() instanceof ArrayVarType || funcDecl.getRetType() instanceof ArrayType)) {
+
+								} else {
+									throw new SemanticAnalysisException("return type is incorrect", progAST);
+								}
 							}
 						}
 					} else {

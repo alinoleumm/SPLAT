@@ -1,5 +1,6 @@
 package splat.parser;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -498,16 +499,21 @@ public class Parser {
 		}
 	}
 
-	private ArrayVarType parseArrayVarType(Token tok, VarType varType) throws ParseException {
+	private ArrayVarType parseArrayVarType(Token tok, VarType varType, List<IntLiteral> indexList) throws ParseException {
 		checkNext("[");
 		String intToken = tokens.remove(0).toString();
 		if(intToken.matches("[1-9][0-9]*|0")) {
 			IntLiteral intLit = new IntLiteral(tok, Integer.parseInt(intToken));
+			indexList.add(intLit);
 			checkNext("]");
 			if(peekNext("[")) {
-				return parseArrayVarType(tok, new ArrayVarType(tok, varType, intLit));
+				return parseArrayVarType(tok, varType, indexList);
 			} else {
-				return new ArrayVarType(tok, varType, intLit);
+				ArrayVarType avt = new ArrayVarType(tok, varType, indexList.get(indexList.size()-1));
+				for(int i = indexList.size()-2; i>=0; i--) {
+					avt = new ArrayVarType(tok, avt, indexList.get(i));
+				}
+				return avt;
 			}
 		} else {
 			throw new ParseException("Illegal int literal", tok);
@@ -516,15 +522,16 @@ public class Parser {
 
 	private VarType parseVarType(Token tok) throws ParseException {
 		if(peekNext("[")) {
+			List<IntLiteral> indexList = new ArrayList<IntLiteral>();
 			if(tok.toString().equals("Integer")) {
-				return parseArrayVarType(tok, new IntegerVarType(tok));
+				return parseArrayVarType(tok, new IntegerVarType(tok), indexList);
 			} else if(tok.toString().equals("Boolean")) {
-				return parseArrayVarType(tok, new BooleanVarType(tok));
+				return parseArrayVarType(tok, new BooleanVarType(tok), indexList);
 			} else if(tok.toString().equals("String")) {
-				return parseArrayVarType(tok, new StringVarType(tok));
+				return parseArrayVarType(tok, new StringVarType(tok), indexList);
 			} else if(isLabel(tok)) {
 				String token = parseLabel(tok);
-				return parseArrayVarType(tok, new RecVarType(tok, token));
+				return parseArrayVarType(tok, new RecVarType(tok, token), indexList);
 			} else {
 				throw new ParseException("Illegal type", tok);
 			}

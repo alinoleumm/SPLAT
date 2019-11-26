@@ -1,5 +1,6 @@
 package splat.parser.elements.vartypes;
 
+import splat.executor.Value;
 import splat.lexer.Token;
 import splat.parser.elements.VarType;
 
@@ -18,5 +19,9 @@ public class RecVarType extends VarType {
 
     public String toString() {
         return label;
+    }
+
+    public Value getInitialValue() {
+        return null;
     }
 }

@@ -55,33 +55,33 @@ public class Executor {
 					+ "semantic analyzer!", -1, -1);
 		}
 	}
-
-	private List<Value> arrayInit(VarType t) {
-		int arraySize = ((ArrayVarType) t).getIntLiteral().getIntLiteral();
-		List<Value> arrayList = new ArrayList<Value>();
-		if(((ArrayVarType) t).getVarType() instanceof ArrayVarType) {
-			for(int i=0; i<arraySize; i++) {
-				arrayList.add(new ArrayValue(arrayInit(((ArrayVarType) t).getVarType())));
-			}
-		} else if(((ArrayVarType) t).getVarType() instanceof IntegerVarType) {
-			for(int i=0; i<arraySize; i++) {
-				arrayList.add(new IntegerValue(0));
-			}
-		} else if(((ArrayVarType) t).getVarType() instanceof BooleanVarType) {
-			for(int i=0; i<arraySize; i++) {
-				arrayList.add(new BooleanValue(false));
-			}
-		} else if(((ArrayVarType) t).getVarType() instanceof StringVarType) {
-			for(int i=0; i<arraySize; i++) {
-				arrayList.add(new StringValue(""));
-			}
-		} else {
-			for(int i=0; i<arraySize; i++) {
-				arrayList.add(null);
-			}
-		}
-		return arrayList;
-	}
+//
+//	private List<Value> arrayInit(VarType t) {
+//		int arraySize = ((ArrayVarType) t).getIntLiteral().getIntLiteral();
+//		List<Value> arrayList = new ArrayList<Value>();
+//		if(((ArrayVarType) t).getVarType() instanceof ArrayVarType) {
+//			for(int i=0; i<arraySize; i++) {
+//				arrayList.add(new ArrayValue(arrayInit(((ArrayVarType) t).getVarType())));
+//			}
+//		} else if(((ArrayVarType) t).getVarType() instanceof IntegerVarType) {
+//			for(int i=0; i<arraySize; i++) {
+//				arrayList.add(new IntegerValue(0));
+//			}
+//		} else if(((ArrayVarType) t).getVarType() instanceof BooleanVarType) {
+//			for(int i=0; i<arraySize; i++) {
+//				arrayList.add(new BooleanValue(false));
+//			}
+//		} else if(((ArrayVarType) t).getVarType() instanceof StringVarType) {
+//			for(int i=0; i<arraySize; i++) {
+//				arrayList.add(new StringValue(""));
+//			}
+//		} else {
+//			for(int i=0; i<arraySize; i++) {
+//				arrayList.add(null);
+//			}
+//		}
+//		return arrayList;
+//	}
 	
 	private void setMaps() {
 		for (Declaration decl : progAST.getDecls()) {
@@ -91,6 +91,8 @@ public class Executor {
 				funcMap.put(label, funcDecl);
 			} else if (decl instanceof VariableDecl) {
 				VariableDecl varDecl = (VariableDecl)decl;
+				progVarMap.put(label,varDecl.getVarType().getInitialValue());
+				/*
 				if(varDecl.getVarType() instanceof IntegerVarType) {
 					progVarMap.put(label, new IntegerValue(0));
 				} else if(varDecl.getVarType() instanceof BooleanVarType) {
@@ -102,6 +104,7 @@ public class Executor {
 				} else {
 					progVarMap.put(label,null);
 				}
+				 */
 			} else if (decl instanceof RectypeDecl) {
 				RectypeDecl rectypeDecl = (RectypeDecl)decl;
 				rectypeMap.put(label, rectypeDecl);

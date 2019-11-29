@@ -22,4 +22,5 @@ public class StringValue extends Value {
     public String toString() {
         return value.substring(1,value.length()-1);
     }
+
 }

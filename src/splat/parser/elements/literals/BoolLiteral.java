@@ -1,6 +1,5 @@
 package splat.parser.elements.literals;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import splat.executor.Value;
 import splat.executor.values.BooleanValue;
 import splat.lexer.Token;

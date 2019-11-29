@@ -16,10 +16,6 @@ public class RecordValue extends Value {
         return value;
     }
 
-//    public void setValue(Map<String, Value> value) {
-//        this.value = value;
-//    }
-
     public void setValue(String str, Value val) {
         value.put(str,val);
     }

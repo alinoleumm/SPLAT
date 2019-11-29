@@ -32,7 +32,6 @@ public class ArrayVarType extends VarType {
         return varType.toString() + "[" + intLiteral.toString() + "]";
     }
 
-    @Override
     public Value getInitialValue() {
         List<Value> values = new ArrayList();
         for(int i = 0; i<intLiteral.getIntLiteral(); i++) {

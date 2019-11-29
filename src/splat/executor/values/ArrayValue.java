@@ -16,10 +16,6 @@ public class ArrayValue extends Value {
         return value;
     }
 
-//    public void setValue(List<Value> value) {
-//        this.value = value;
-//    }
-
     public void setValue(int index, Value val) {
         value.set(index,val);
     }

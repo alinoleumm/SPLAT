@@ -85,7 +85,6 @@ public class RecordFieldAccess extends LabelAccess {
         }
     }
 
-    // TODO: recursive array accesses???
     public Value evaluate(Map<String, FunctionDecl> funcMap, Map<String, RectypeDecl> rectypeMap, Map<String, Value> varAndParamMap) throws ExecutionException, ReturnFromCall {
         Value val = labelAccess.evaluate(funcMap,rectypeMap,varAndParamMap);
         if(val!=null) {

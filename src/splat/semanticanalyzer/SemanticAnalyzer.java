@@ -219,11 +219,6 @@ public class SemanticAnalyzer {
 				throw new SemanticAnalysisException("nonvoid function must return expression", progAST);
 			}
 		}
-
-		// Perform semantic analysis on the function body
-//		for (Statement stmt : funcDecl.getStmts()) {
-//			stmt.analyze(funcMap, rectypeMap, varAndParamMap);
-//		}
 	}
 
 
